@@ -1,0 +1,17 @@
+{
+    "title":"smart-window-companion",
+    "description":"Smart Window Companion",
+    "id":"smart-window-companion.project.kinoma.marvell.com",
+    "tags":[
+        "emptySample"
+    ],
+    "Create":{
+        "main":"src/main"
+    },
+    "iap140":{
+        "main":"src/main"
+    },
+    "Element":{
+        "main":"src/main"
+    }
+}
