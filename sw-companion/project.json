@@ -1,0 +1,17 @@
+{
+    "title":"SW Companion",
+    "description":"This template builds an app that traces \"Hello, World!\" and breaks into the debugger.",
+    "id":"sw-companion.project.kinoma.marvell.com",
+    "tags":[
+        "emptySample"
+    ],
+    "Create":{
+        "main":"src/main"
+    },
+    "Element":{
+        "main":"src/main"
+    },
+    "iap140":{
+    	"main":"src/main"
+    }
+}
