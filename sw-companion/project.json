@@ -1,5 +1,5 @@
 {
-    "title":"SW Companion",
+    "title":"sw-companion",
     "description":"This template builds an app that traces \"Hello, World!\" and breaks into the debugger.",
     "id":"sw-companion.project.kinoma.marvell.com",
     "tags":[
