@@ -18,6 +18,8 @@
 import LocationScreen from 'locationScreen';
 import WindowScreen from 'windowScreen';
 import SpecificWindow from 'specificWindow';
+import AddWindowScreen from 'addWindow';
+import SuccessScreen from 'successWindow';
 import FillScreen from 'fillScreen';
 import Pins from "pins";
 import Header from 'header';
@@ -84,6 +86,11 @@ let state = {
 let remotePins;
 
 application.behavior = Behavior({
+	onAddWindow: (container, data) => {
+		application.empty();
+		application.add(new AddWindowScreen(data));
+	},
+	onSuccessAdd: (container, data) => {		application.empty();		application.add(new SuccessScreen(data));	},  	onFinishSuccess:(container, data) => {		application.empty();		application.add(new WindowScreen(data));	},
 	onSquarePressed: (container, data) => {
 		application.empty();
 		switch (data.type) {

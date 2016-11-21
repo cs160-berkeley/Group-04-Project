@@ -71,7 +71,17 @@ let WindowScreen = Column.template($ => {
 						url: "assets/add.png",
 						aspect: "fit",
 						height: 35,
-						left: "-120"
+						left: "-120",
+						active: true,
+						behavior: Behavior({
+							onTouchEnded: (content) => {
+								application.distribute('onAddWindow', {
+									locationName: $.name,
+									state: $.state,
+									numWindows: numWindows
+								});
+							}
+						})
 					}),
 				]
 			}),
