@@ -7,55 +7,55 @@ import {
 	bigTextStyle
 } from 'utils';
 
-let LocationScreen = Column.template($ => ({
-	top: 0, left: 0, right: 0, bottom: 0,
-	active: true, skin: whiteSkin,
-	contents: [
-		new Header(),
-		new Line({
-			top: 20, left: 0, right: 0,
-			contents: [
-				new Text({
-					left: 0, right: 0, top: 0,
-					string: "Locations",
-					style: bigTextStyle
-				}),
-				new Picture({
-					url: "assets/add.png",
-					aspect: "fit",
-					height: 35,
-					left: "-120"
-				}),
-			]
-		}),
-		new SquareContainer({
-			top: 30,
-			type: "Location",
-			contents: [
-				new Square({
-					name: "Office",
-					type: "Location"
-				}),
-				new Square({
-					name: "Museum",
-					type: "Location"
-				})
-			]
-		}),
-		new SquareContainer({
-			top: 30,
-			contents: [
-				new Square({
-					name: "Exhibit",
-					type: "Location"
-				}),
-				new Square({
-					name: "Home",
-					type: "Location"
-				})
-			]
-		})
-	]
-}));
+let LocationScreen = Column.template($ => {
+	let numWindows = 0;
+	let firstSquareContainer = new SquareContainer({
+		top: 30
+	});
+	let secondSquareContainer = new SquareContainer({
+		top: 30
+	});
+	for (let location in $.state) {
+		if ($.state.hasOwnProperty(location)) {
+			numWindows += 1;
+			let square = new Square({
+				name: location,
+				type: "Location",
+				state: $.state
+			});
+			if (numWindows > 2) {
+				secondSquareContainer.add(square);
+			} else {
+				firstSquareContainer.add(square);
+			}
+		}
+	}
+	
+	return {
+		top: 0, left: 0, right: 0, bottom: 0,
+		active: true, skin: whiteSkin,
+		contents: [
+			new Header(),
+			new Line({
+				top: 20, left: 0, right: 0,
+				contents: [
+					new Text({
+						left: 0, right: 0, top: 0,
+						string: "Locations",
+						style: bigTextStyle
+					}),
+					new Picture({
+						url: "assets/add.png",
+						aspect: "fit",
+						height: 35,
+						left: "-120"
+					}),
+				]
+			}),
+			firstSquareContainer,
+			secondSquareContainer
+		]
+	}
+});
 
 export default LocationScreen;

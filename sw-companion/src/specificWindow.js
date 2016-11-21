@@ -14,21 +14,6 @@ let SpecificWindow = Column.template($ => ({
 	active: true, skin: whiteSkin,
 	contents: [
 		new Header(),
-		//new Line({
-		//	top: 0,
-		//	left: 0,
-		//	width: 320,
-		//	height: 25,
-		//	contents: [
-		//		new Text({
-		//			left: "-155", right: 0,
-		//			align: "center",
-		//			string: "Locations > " + $.name,
-		//			style: smallTextStyle
-		//		}),
-		//
-		//	]
-		//}),
 		new Line({
 			top: 20, left: 0, right: 0,
 			contents: [
