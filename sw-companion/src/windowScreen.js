@@ -20,10 +20,18 @@ let WindowScreen = Column.template($ => {
 	for (let window in windows) {
 		if (windows.hasOwnProperty(window)) {
 			numWindows += 1;
+			let colorData = windows[window];
+			let r = Math.floor(colorData.r).toString();
+			let g = Math.floor(colorData.g).toString();
+			let b = Math.floor(colorData.b).toString();
+			let a = colorData.a.toString();
+			let colorString = "rgba(" + r + "," + g + "," + b + "," + a + ")";
 			let square = new Square({
 				name: window,
 				type: "Window",
-				state: $.state
+				state: $.state,
+				locationName: $.name,
+				fill: colorString
 			});
 			if (numWindows > 2) {
 				secondSquareContainer.add(square);

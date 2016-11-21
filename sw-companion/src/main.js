@@ -106,22 +106,16 @@ application.behavior = Behavior({
 			case "Home":
 				application.add(new LocationScreen(data));
 				break;
+			case "Specific Window":
+				application.add(new SpecificWindow(data));
+				break;
 			default:
 				application.add(new LocationScreen(data));
 		}
 	},
 	onFillPressed: (container, data) => {
 		application.empty();
-
-	    let r = Math.floor(data.r).toString();
-	    let g = Math.floor(data.g).toString();
-	    let b = Math.floor(data.b).toString();
-	    let a = data.a.toFixed(2).toString();
-	    let colorString = "rgba(" + r + "," + g + "," + b + "," + a + ")";
-	    
-	    application.add(new FillScreen({
-	    	windowFillColor: colorString
-	    }));
+	    application.add(new FillScreen(data));
 	},
 	onLaunch(application) {
     let discoveryInstance = Pins.discover(

@@ -16,7 +16,7 @@ let square = Container.template($ => ({
 					top: 2,
 					bottom: 2
 				},
-				fill: whiteSkin
+				fill: ($.fill) ? $.fill : whiteSkin
 			})
 		}),
 		new Text({

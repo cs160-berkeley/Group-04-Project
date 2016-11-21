@@ -9,79 +9,27 @@ import {
     ButtonBehavior,
 } from 'buttons';
 
-/* GLOBAL VARIABLE SLIDERS */
-var redVal = 0;
-var greenVal = 0;
-var blueVal = 0;
-var alphaVal = 0;
+import {
+	bigTextStyle,
+	whiteSkin
+} from 'utils';
 
 // var updatingColor = false;
 
 // var deviceURL = "";
 
-var whiteSkin = new Skin( { fill:"white" } );
 var titleStyle = new Style( { font: "bold 28px", color:"black" } );
 var valueStyle = new Style( { font: "24px", color:"black"});
 
-var rgbLabel = new Label({height:30, string:"RGB", style: valueStyle});
-var alphaLabel = new Label({height:30, string:"Opacity", style: valueStyle});
 let circleRadius = 10;
-let margin = 10;
 let backgroundSkin = new Skin({ fill: '#F0F0F0' });
-let ColorSlider = CircleSlider.template($ => ({ left: margin, right: margin, top: margin, bottom: margin }));
-
-let redSliderData = {
-  label:"red",
-  min:0,
-  max:1,
-  value:0,
-  circleColor: "red",
-  strokeColor: "#8E9595",
-  strokeWidth: 10,
-  radius: circleRadius
-};
-
-let greenSliderData = {
-  label:"green",
-  min:0,
-  max:1,
-  value:0,
-  circleColor: "green",
-  strokeColor: "#8E9595",
-  strokeWidth: 10,
-  radius: circleRadius
-};
-
-let blueSliderData = {
-  label: "blue",
-  min:0,
-  max:1,
-  value:0,
-  circleColor: "blue",
-  strokeColor: "#8E9595",
-  strokeWidth: 10,
-  radius: circleRadius
-};
-
-let alphaSliderData = {
-  label: "alpha",
-  min:0,
-  max:1,
-  value:1,
-  circleColor: "black",
-  strokeColor: "#8E9595",
-  strokeWidth: 10,
-  radius: circleRadius
-};
-
-let redColorSlider = new ColorSlider(redSliderData);
-let greenColorSlider = new ColorSlider(greenSliderData);
-let blueColorSlider = new ColorSlider(blueSliderData);
-let alphaColorSlider = new ColorSlider(alphaSliderData);
+let ColorSlider = CircleSlider.template($ => ({
+	left: 10, right: 10, top: 10, bottom: 10
+}));
 
 
 let WindowPreview = Container.template($ => ({
-  bottom: 38, width: 100, height: 100,
+  bottom: 15, width: 100, height: 100,
   skin: new Skin({
     stroke: "green",
     borders: {
@@ -99,6 +47,32 @@ let SliderContainer = Column.template($ => ({
   active: true,
   contents: [
     new Header(),
+    new Line({
+		top: 10, left: 0, right: 0,
+		contents: [
+			new Picture({
+				url: "assets/back.png",
+				aspect: "fit",
+				height: 45,
+				active: true,
+				behavior: Behavior({
+					onTouchEnded: (content) => {
+						application.distribute('onBackPressed', {
+							screen: "Specific Window",
+							name: $.windowName,
+							locationName: $.locationName,
+							state: state
+						});
+					}
+				})
+			}),
+			new Text({
+				left: "-70", right: 0, top: 8,
+				string: "Edit " + $.windowName,
+				style: bigTextStyle
+			})
+		]
+	}),
     new Column({ top: 10, left: 10, right: 10, height: 230, skin: backgroundSkin,
       contents: [
         rgbLabel,
@@ -111,16 +85,22 @@ let SliderContainer = Column.template($ => ({
       Behavior: class extends Behavior {
         onChanged(canvas, value, color) {
           if (color == "red") {
-            redVal = Math.floor(value * 255);
+            let redVal = Math.floor(value);
+            state[$.locationName][$.windowName].r = redVal;
           } else if (color == "green") {
-            greenVal = Math.floor(value * 255);
+            let greenVal = Math.floor(value);
+            state[$.locationName][$.windowName].g = greenVal;
           } else if (color == "blue") {
-            blueVal = Math.floor(value * 255);
+            let blueVal = Math.floor(value);
+            state[$.locationName][$.windowName].b = blueVal;
           } else if (color == "alpha") {
-            alphaVal = value.toFixed(2);
+            let alphaVal = value.toFixed(2);
+            state[$.locationName][$.windowName].a = alphaVal;
           }
+          
+          let data = state[$.locationName][$.windowName];
 
-          let colorString = "rgba(" + redVal + "," + greenVal + "," + blueVal + "," + alphaVal + ")";
+          let colorString = "rgba(" + data.r + "," + data.g + "," + data.b + "," + data.a + ")";
           canvas.container.container.replace(canvas.container.container.last,
           		new WindowPreview({windowFillColor: colorString}));
           // trace(colorString + "\n");
@@ -139,13 +119,83 @@ let SliderContainer = Column.template($ => ({
   ],
 }));
 
-let FillScreen = Container.template($ => ({
-	top: 0, bottom: 0, left: 0, right: 0,
-	skin: new Skin({ fill: "white" }),
-	contents: [
-		new SliderContainer(),
-		new WindowPreview({ windowFillColor: $.windowFillColor })
-	]
-}));
+let state;
+let redColorSlider;
+let greenColorSlider;
+let blueColorSlider;
+let alphaColorSlider;
+let rgbLabel;
+let alphaLabel;
+
+let FillScreen = Container.template($ => {
+	state = $.state;
+	let data = state[$.locationName][$.windowName];
+	let r = Math.floor(data.r).toString();
+	let g = Math.floor(data.g).toString();
+	let b = Math.floor(data.b).toString();
+	let a = data.a.toString();
+	let colorString = "rgba(" + r + "," + g + "," + b + "," + a + ")";
+	
+	let redSliderData = {
+	  label:"red",
+	  min:0,
+	  max:255,
+	  value: data.r,
+	  circleColor: "red",
+	  strokeColor: "#8E9595",
+	  strokeWidth: 10,
+	  radius: circleRadius
+	};
+	
+	let greenSliderData = {
+	  label:"green",
+	  min:0,
+	  max:255,
+	  value: data.g,
+	  circleColor: "green",
+	  strokeColor: "#8E9595",
+	  strokeWidth: 10,
+	  radius: circleRadius
+	};
+	
+	let blueSliderData = {
+	  label: "blue",
+	  min:0,
+	  max:255,
+	  value: data.b,
+	  circleColor: "blue",
+	  strokeColor: "#8E9595",
+	  strokeWidth: 10,
+	  radius: circleRadius
+	};
+	
+	let alphaSliderData = {
+	  label: "alpha",
+	  min:0,
+	  max:1,
+	  value: data.a,
+	  circleColor: "black",
+	  strokeColor: "#8E9595",
+	  strokeWidth: 10,
+	  radius: circleRadius
+	};
+
+	redColorSlider = new ColorSlider(redSliderData);
+	greenColorSlider = new ColorSlider(greenSliderData);
+	blueColorSlider = new ColorSlider(blueSliderData);
+	alphaColorSlider = new ColorSlider(alphaSliderData);
+	rgbLabel = new Label({height:30, string:"RGB", style: valueStyle});
+	alphaLabel = new Label({height:30, string:"Opacity", style: valueStyle});
+	
+		
+	return {
+		top: 0, bottom: 0, left: 0, right: 0,
+		skin: whiteSkin,
+		contents: [
+			new SliderContainer($),
+			new WindowPreview({ windowFillColor: colorString })
+		]
+	}
+});
 
 export default FillScreen;
