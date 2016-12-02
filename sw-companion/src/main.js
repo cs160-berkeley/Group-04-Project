@@ -86,6 +86,7 @@ application.behavior = Behavior({
 	},
 	onSuccessAdd: (container, data) => {
 		application.empty();
+    remotePins.invoke("/windowSynched/write", 1);
 		application.add(new SuccessScreen(data));
 	},
   	onFinishSuccess:(container, data) => {
