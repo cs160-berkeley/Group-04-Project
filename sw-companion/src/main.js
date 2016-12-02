@@ -81,6 +81,7 @@ let remotePins;
 application.behavior = Behavior({
 	onAddWindow: (container, data) => {
 		application.empty();
+		remotePins.invoke("/isWindowActive/write", 1);
 		application.add(new AddWindowScreen(data));
 	},
 	onSuccessAdd: (container, data) => {
