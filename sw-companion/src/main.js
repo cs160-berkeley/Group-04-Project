@@ -24,11 +24,12 @@ import FillScreen from 'fillScreen';
 import Pins from "pins";
 import Header from 'header';
 
+var deviceURL = "";
+
 Handler.bind("/discover", Behavior({
   onInvoke: function(handler, message){
     deviceURL = JSON.parse(message.requestText).url;
     trace("CONNECTED TO DEVICE\n");
-    trace(deviceURL + " DEVICE URL \n");
   }
 }));
 Handler.bind("/delay", {
@@ -47,29 +48,21 @@ Handler.bind("/forget", Behavior({
   }
 }));
 
-Handler.bind("/delayReadPins", {
-    onInvoke: function(handler, message){
-        handler.wait(4000);
-    },
-    onComplete(handler, message, json){
-       // trace("done waiting \n");
-       // updatingColor = false;
-    }
-});
-
 let state = {
 	"Office": {
 		"Window 1": {
 			r: 255,
 			g: 0,
 			b: 0,
-			a: 0.5
+			a: 0.5,
+      updatingColorFromDevice: true,
 		},
 		"Window 2": {
 			r: 0,
 			g: 100,
 			b: 48,
-			a: 0.9
+			a: 0.9,
+      updatingColorFromDevice: true,
 		}
 	},
 	"Home": {
@@ -77,11 +70,11 @@ let state = {
 			r: 185,
 			g: 94,
 			b: 23,
-			a: 0.8
+			a: 0.8,
+      updatingColorFromDevice: true,
 		}
 	}
 };
-
 
 let remotePins;
 
@@ -90,7 +83,14 @@ application.behavior = Behavior({
 		application.empty();
 		application.add(new AddWindowScreen(data));
 	},
-	onSuccessAdd: (container, data) => {		application.empty();		application.add(new SuccessScreen(data));	},  	onFinishSuccess:(container, data) => {		application.empty();		application.add(new WindowScreen(data));	},
+	onSuccessAdd: (container, data) => {
+		application.empty();
+		application.add(new SuccessScreen(data));
+	},
+  	onFinishSuccess:(container, data) => {
+		application.empty();
+		application.add(new WindowScreen(data));
+	},
 	onSquarePressed: (container, data) => {
 		application.empty();
 		switch (data.type) {
@@ -122,7 +122,7 @@ application.behavior = Behavior({
 	},
 	onFillPressed: (container, data) => {
 		application.empty();
-	    application.add(new FillScreen(data));
+      application.distribute("onReadSensor", data);
 	},
 	onLaunch(application) {
     let discoveryInstance = Pins.discover(
@@ -130,7 +130,6 @@ application.behavior = Behavior({
             if (connectionDesc.name == "smart-window-pins") {
                 trace("Connecting to remote pins\n");
                 remotePins = Pins.connect(connectionDesc);
-                application.distribute("onReadSensor");
             }
         },
         connectionDesc => {
@@ -139,18 +138,24 @@ application.behavior = Behavior({
                 remotePins = undefined;
             }
         }
-    ),
-    // application.discover("smart-window-device.project.kinoma.marvell.com");
+    );
+    application.discover("sw-device.project.kinoma.marvell.com");
   },
   onQuit(application) {
-     // trace("URL: " + deviceURL + "\n");
-     // application.forget("smart-window-device.project.kinoma.marvell.com");
+     trace("URL: " + deviceURL + "\n");
+     application.forget("sw-device.project.kinoma.marvell.com");
   },
-  onReadSensor(application, value) {
+  onReadSensor(application, data) {
     remotePins.repeat("/colorSensor/getColor", 33, result => {
         remotePins.invoke("/alpha/read", value => {
-          if (!updatingColor) {
-            this.gotColor(application, result, value);
+          if (data.state[data.locationName][data.windowName].updatingColorFromDevice) {
+            // this.gotColor(application, result, value);
+            data.state[data.locationName][data.windowName].r = result.r;
+            data.state[data.locationName][data.windowName].g = result.g;
+            data.state[data.locationName][data.windowName].b = result.b;
+            data.state[data.locationName][data.windowName].a = value;
+            application.empty();
+            application.add(new FillScreen(data));
           }
         });
       });

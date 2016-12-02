@@ -14,10 +14,6 @@ import {
 	whiteSkin
 } from 'utils';
 
-// var updatingColor = false;
-
-// var deviceURL = "";
-
 var titleStyle = new Style( { font: "bold 28px", color:"black" } );
 var valueStyle = new Style( { font: "24px", color:"black"});
 
@@ -97,22 +93,13 @@ let SliderContainer = Column.template($ => ({
             let alphaVal = value.toFixed(2);
             state[$.locationName][$.windowName].a = alphaVal;
           }
-          
+
           let data = state[$.locationName][$.windowName];
 
+          data.updatingColorFromDevice = false;
           let colorString = "rgba(" + data.r + "," + data.g + "," + data.b + "," + data.a + ")";
           canvas.container.container.replace(canvas.container.container.last,
           		new WindowPreview({windowFillColor: colorString}));
-          // trace(colorString + "\n");
-          // application.skin = new Skin(colorString);
-          //application.remove(curSampleWindow);
-          //curSampleWindow = new sampleWindow({windowFillColor: colorString});
-          //application.add(curSampleWindow);
-
-          // trace(deviceURL + "updateColor\n");
-          //updatingColor = true;
-          // application.invoke(new Message(deviceURL + "updateColor"), Message.JSON);
-          // application.invoke(new Message("/delayReadPins"));
         }
       },
     }),
@@ -135,7 +122,7 @@ let FillScreen = Container.template($ => {
 	let b = Math.floor(data.b).toString();
 	let a = data.a.toString();
 	let colorString = "rgba(" + r + "," + g + "," + b + "," + a + ")";
-	
+
 	let redSliderData = {
 	  label:"red",
 	  min:0,
@@ -146,7 +133,7 @@ let FillScreen = Container.template($ => {
 	  strokeWidth: 10,
 	  radius: circleRadius
 	};
-	
+
 	let greenSliderData = {
 	  label:"green",
 	  min:0,
@@ -157,7 +144,7 @@ let FillScreen = Container.template($ => {
 	  strokeWidth: 10,
 	  radius: circleRadius
 	};
-	
+
 	let blueSliderData = {
 	  label: "blue",
 	  min:0,
@@ -168,7 +155,7 @@ let FillScreen = Container.template($ => {
 	  strokeWidth: 10,
 	  radius: circleRadius
 	};
-	
+
 	let alphaSliderData = {
 	  label: "alpha",
 	  min:0,
@@ -186,8 +173,8 @@ let FillScreen = Container.template($ => {
 	alphaColorSlider = new ColorSlider(alphaSliderData);
 	rgbLabel = new Label({height:30, string:"RGB", style: valueStyle});
 	alphaLabel = new Label({height:30, string:"Opacity", style: valueStyle});
-	
-		
+
+
 	return {
 		top: 0, bottom: 0, left: 0, right: 0,
 		skin: whiteSkin,

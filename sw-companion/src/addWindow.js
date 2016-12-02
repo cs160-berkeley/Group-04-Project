@@ -65,7 +65,7 @@ let MainContainerTemplate = Container.template($ => {
 	      new Header(),
 	      new Label({
 	      	left: 0, right: 0, bottom: 125, top: 0,
-	      	style: blackStyle, 
+	      	style: blackStyle,
 	      	string: "Add a Window to " + $.locationName
 	      }),
 	      new MyField({name: ""}),
@@ -137,10 +137,11 @@ let MainContainerTemplate = Container.template($ => {
 									r: 0,
 									g: 0,
 									b: 0,
-									a: 0
+									a: 0,
+                  updatingColorFromDevice: true,
 								};
 								let windowName = "Window " + ($.numWindows + 1);
-								state[$.locationName][windowName] = colorData; 
+								state[$.locationName][windowName] = colorData;
 								application.distribute('onSuccessAdd', {
 									name: $.locationName,
 									state: state

@@ -1,7 +1,7 @@
 {
     "title":"sw-device",
     "description":"Smart Window Device",
-    "id":"smart-window-device.project.kinoma.marvell.com",
+    "id":"sw-device.project.kinoma.marvell.com",
     "tags":[
         "emptySample"
     ],
@@ -9,6 +9,9 @@
         "main":"src/main"
     },
     "Element":{
+        "main":"src/main"
+    },
+    "iap140":{
         "main":"src/main"
     }
 }

@@ -1,6 +1,6 @@
 {
     "title":"sw-companion",
-    "description":"This template builds an app that traces \"Hello, World!\" and breaks into the debugger.",
+    "description":"Smart Window Companion",
     "id":"sw-companion.project.kinoma.marvell.com",
     "tags":[
         "emptySample"
