@@ -2,13 +2,24 @@ let Pins = require("pins");
 
 /* APPLICATION */
 
-var smallBlackStyle = new Style( { font: "bold 20px", color:"black"});
-
-var updatingColorLabel = new Label({left:0, right:0, top:10, string: "HERE", style: smallBlackStyle});
+var smallBlackStyle = new Style( { font: "bold 20px", color:"white"});
+var buttonReader;
+var updatingColorLabel = new Label({
+	left:0, right:0, 
+	top:10, string: "HERE",
+	style: smallBlackStyle
+});
 let MainContainer = Column.template($ => ({
-  left: 10, right: 10, bottom: 10, height: 40, skin: backgroundSkin,
+  left: 10, right: 10, bottom: 10, height: 40,
   contents: [ updatingColorLabel ]
 }));
+
+let pollWindow = (result) => {
+	if (result) {    	trace("Button on.\n");
+    	application.add(new MainContainer());
+    	buttonReader.close();	} else {    	trace("Button off.\n");	}
+};
+
 
 Handler.bind("/updateColor", Behavior({
   onInvoke: function(handler, message){
@@ -46,26 +57,27 @@ application.behavior = Behavior({
 					// led: { pin: 21 }
 				}
 			},
-      alpha: {
-        require: "Analog", //"Analog" if using the built-in BLL
-        pins: {
-          analog: { pin: 56 },
-          ground: { pin: 55, type: "Ground" },
-          power: { pin: 57, type: "Power", voltage: 3.3 }
-        }
-      },
+		      alpha: {
+		        require: "Analog", //"Analog" if using the built-in BLL
+		        pins: {
+		          analog: { pin: 56 },
+		          ground: { pin: 55, type: "Ground" },
+		          power: { pin: 57, type: "Power", voltage: 3.3 }
+		        }
+		      },
+		      isWindowActive: {		         require: "Digital", // use built-in digital BLL		         pins: {		            ground: { pin: 51, type: "Ground" },		            digital: { pin: 52, direction: "output" },		         }		      },
 		}, success => this.onPinsConfigured(application, success));
     application.shared = true;
 	},
 	onPinsConfigured(application, success) {
 		if (success) {
 			Pins.repeat("/colorSensor/getColor", 33, result => {
-        Pins.invoke("/alpha/read", value => {
-          this.gotColor(application, result, value);
-        });
-      });
-
+	        	Pins.invoke("/alpha/read", value => {
+	          		this.gotColor(application, result, value);
+	        	});
+      		});
 			Pins.share("ws", {zeroconf: true, name: "smart-window-pins"});
+			buttonReader = Pins.repeat("/isWindowActive/read", 200, pollWindow);
 		}
 		else
 			trace("failed to configure pins\n");
