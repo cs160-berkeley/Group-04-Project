@@ -153,12 +153,11 @@ let FillWindow = Column.template($ => {
 
 
 var updatingColorLabel = Label.template($ => ({
-	left:0, right:0,
-	top:10, string: "WINDOW CODE",
+	top:20, string: "WINDOW CODE",
 	style: smallBlackStyle
 }));
 let MainContainer = Column.template($ => ({
-  left: 10, right: 10, bottom: 10, height: 40,
+  left: 0, right: 0, top: 0, height: 200, skin: whiteSkin,
   contents: [
     new Header(),
     new updatingColorLabel()
@@ -249,6 +248,7 @@ application.behavior = Behavior({
           },
 		}, success => this.onPinsConfigured(application, success));
     application.shared = true;
+    application.skin = whiteSkin;
 	},
 	onPinsConfigured(application, success) {
 		if (success) {
