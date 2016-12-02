@@ -23,6 +23,8 @@ import SuccessScreen from 'successWindow';
 import FillScreen from 'fillScreen';
 import Pins from "pins";
 import Header from 'header';
+import { NotificationScreenTemplate } from "notificationScreen"
+import { NotificationScreenNotificationTemplate } from "notificationScreen"
 
 var deviceURL = "";
 
