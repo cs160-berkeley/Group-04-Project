@@ -28,13 +28,13 @@ import { NotificationScreenNotificationTemplate } from "notificationScreen"
 import ShareWindow from 'shareWindow';
 
 import {
-	WaitingForDeviceScreen,
-	ErrorScreen
+  WaitingForDeviceScreen,
+  ErrorScreen
 } from 'utilScreens';
 
 import {
-	mediumTextStyle,
-	whiteSkin
+  mediumTextStyle,
+  whiteSkin
 } from 'utils';
 
 var deviceURL = "";
@@ -64,33 +64,33 @@ Handler.bind("/forget", Behavior({
 }));
 
 let state = {
-	locations: {
-		"Office": {
-			"Window 1": {
-				r: 255,
-				g: 0,
-				b: 0,
-				a: 0.5,
-	      		updatingColorFromDevice: true,
-			},
-			"Window 2": {
-				r: 0,
-				g: 100,
-				b: 48,
-				a: 0.9,
-	      		updatingColorFromDevice: true,
-			}
-		},
-		"Home": {
-			"Window 1": {
-				r: 185,
-				g: 94,
-				b: 23,
-				a: 0.8,
-	      		updatingColorFromDevice: true,
-			}
-		}
-	}
+  locations: {
+    "Office": {
+      "Window 1": {
+        r: 255,
+        g: 0,
+        b: 0,
+        a: 0.5,
+            updatingColorFromDevice: true,
+      },
+      "Window 2": {
+        r: 0,
+        g: 100,
+        b: 48,
+        a: 0.9,
+            updatingColorFromDevice: true,
+      }
+    },
+    "Home": {
+      "Window 1": {
+        r: 185,
+        g: 94,
+        b: 23,
+        a: 0.8,
+            updatingColorFromDevice: true,
+      }
+    }
+  }
 };
 
 Handler.bind("/syncColorToCompanion", Behavior({
@@ -111,56 +111,57 @@ Handler.bind("/syncColorToCompanion", Behavior({
 let remotePins;
 
 application.behavior = Behavior({
-	onAddWindow: (container, data) => {
-		application.empty();
-		remotePins.invoke("/isWindowActive/write", 1);
-		application.add(new AddWindowScreen(data));
-	},
-	onSuccessAdd: (container, data) => {
-		application.empty();
-    	remotePins.invoke("/windowSynched/write", 1);
-		application.add(new SuccessScreen(data));
-	},
-	onSuccessShare: (container, data) => {
- 		application.empty();
- 		//remotePins.invoke("", 1);
- 		application.add(new SuccessScreen(data));
- 	},
- 	onShareWindow: (container, data) => {
- 		application.empty();
- 		application.add(new ShareWindow(data));
- 	},
-  	onFinishSuccess:(container, data) => {
-		application.empty();
+  onAddWindow: (container, data) => {
+    application.empty();
+    remotePins.invoke("/isWindowActive/write", 1);
+    remotePins.invoke("/isWindowShared/write", 0);
+    application.add(new AddWindowScreen(data));
+  },
+  onSuccessAdd: (container, data) => {
+    application.empty();
+      remotePins.invoke("/windowSynched/write", 1);
+    application.add(new SuccessScreen(data));
+  },
+  onSuccessShare: (container, data) => {
+    application.empty();
+    remotePins.invoke("/isWindowShared/write", 1);
+    application.add(new SuccessScreen(data));
+  },
+  onShareWindow: (container, data) => {
+    application.empty();
+    application.add(new ShareWindow(data));
+  },
+    onFinishSuccess:(container, data) => {
+    application.empty();
     currentLocation = data.locationName;
     currentWindow = data.windowName;
-		application.add(new SpecificWindow(data));
-	},
-	onSquarePressed: (container, data) => {
-		application.empty();
-		switch (data.type) {
-			case "Location":
-				application.add(new WindowScreen(data));
-				break;
-			case "Window":
-				application.add(new SpecificWindow(data));
+    application.add(new SpecificWindow(data));
+  },
+  onSquarePressed: (container, data) => {
+    application.empty();
+    switch (data.type) {
+      case "Location":
+        application.add(new WindowScreen(data));
+        break;
+      case "Window":
+        application.add(new SpecificWindow(data));
         currentLocation = data.locationName;
         currentWindow = data.windowName;
-				break;
-			default:
-				application.add(new LocationScreen(data));
-		}
-	},
-	onBackPressed: (container, data) => {
-		application.empty();
-		switch (data.screen) {
-			case "Location":
-				application.add(new WindowScreen(data));
-				break;
-			case "Home":
-				application.add(new LocationScreen(data));
-				break;
-			case "Specific Window":
+        break;
+      default:
+        application.add(new LocationScreen(data));
+    }
+  },
+  onBackPressed: (container, data) => {
+    application.empty();
+    switch (data.screen) {
+      case "Location":
+        application.add(new WindowScreen(data));
+        break;
+      case "Home":
+        application.add(new LocationScreen(data));
+        break;
+      case "Specific Window":
         currentLocation = data.locationName;
         currentWindow = data.windowName;
 
@@ -173,16 +174,16 @@ application.behavior = Behavior({
           b: state.locations[currentLocation][currentWindow].b,
           a: state.locations[currentLocation][currentWindow].a
         })));
-				application.add(new SpecificWindow(data));
-				break;
-			default:
-				application.add(new LocationScreen(data));
-		}
-	},
-	onFillPressed: (container, data) => {
-		application.empty();
+        application.add(new SpecificWindow(data));
+        break;
+      default:
+        application.add(new LocationScreen(data));
+    }
+  },
+  onFillPressed: (container, data) => {
+    application.empty();
     application.add(new FillScreen({ state: state, locationName: currentLocation, windowName: currentWindow }));
-	},
+  },
   onLaunch(application) {
     application.add(new WaitingForDeviceScreen());
     let discoveryInstance = Pins.discover(
@@ -208,21 +209,17 @@ application.behavior = Behavior({
     application.shared = true;
     application.discover("sw-device.project.kinoma.marvell.com");
   },
-	readChoice(application, value) {
+  readChoice(application, value) {
     if (remotePins) {
-      remotePins.repeat("/choice/read", 500, result => {
-        trace("result is AHHHHHHHHHH" + result + "\n");
-        if(result==0){
+      remotePins.repeat("/isWindowShared/read", 1000, result => {
+        if (result == 0){
           application.distribute("changeImageURL", {url: "assets/window.png"});
-          trace("temp equals 0"+"\n");
-        }
-        if(result==1){
+        } else {
           application.distribute("changeImageURL", {url: "assets/window_notification.png"});
-          trace("temp equals 1"+"\n");
         }
       });
     }
-	},
+  },
   onQuit(application) {
      trace("URL: " + deviceURL + "\n");
      application.shared = false;

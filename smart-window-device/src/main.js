@@ -194,6 +194,13 @@ let pollSyncWindow = (result) => {
   }
 };
 
+var sharedReader;
+let pollShared = (result) => {
+  if (result == 1) {
+  } else {
+  }
+};
+
 Handler.bind("/discover", Behavior({
   onInvoke: function(handler, message){
     companionURL = JSON.parse(message.requestText).url;
@@ -263,15 +270,15 @@ application.behavior = Behavior({
 	},
 	onLaunch(application) {
 		Pins.configure({
+			isWindowShared: {
+		         require: "Digital", // use built-in digital BLL
+		         pins: {
+		            ground: { pin: 60, type: "Ground" },
+		            digital: { pin: 61, direction: "output" },
+		         }
+		      },
 
-         choice: {
-                  require: "Digital",
-                   pins: {
-                      power: {pin: 59, voltage: 3.3, type: "Power"},
-                      ground: {pin: 60, type: "Ground"},
-                      digital: {pin: 61, direction: "input"}
-                  }
-              },
+         
 
 			colorSensor: {
 				require: "TCS34725",
@@ -318,7 +325,8 @@ application.behavior = Behavior({
       });
 			Pins.share("ws", {zeroconf: true, name: "smart-window-pins"});
 			buttonReader = Pins.repeat("/isWindowActive/read", 200, pollWindow);
-      syncButtonReader = Pins.repeat("/windowSynched/read", 200, pollSyncWindow);
+      		syncButtonReader = Pins.repeat("/windowSynched/read", 200, pollSyncWindow);
+      		sharedReader = Pins.repeat("/isWindowShared/read", 200, pollShared);
 		}
 		else
 			trace("failed to configure pins\n");
