@@ -4,10 +4,8 @@ import {
 
 
 let notification_image = Picture.template($ => ({
-  height: 35, 
-  left:0,
-  right:240,
-  url: "assets/window.png",
+  height: 60,
+  url: "assets/header.png",
   aspect:"fit",
 
   behavior:Behavior({
@@ -25,14 +23,6 @@ let header = Container.template($ => ({
 	skin: headerSkin,
 	contents: [
 		new notification_image(),
-		new Text({
-			left: 65, right: 0,
-			string: "Smart Window",
-			style: new Style({
-				color: "white",
-				font: "bold 35px"
-			})
-		})
 	]
 }));
 

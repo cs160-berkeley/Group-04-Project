@@ -210,9 +210,9 @@ application.behavior = Behavior({
     if (remotePins) {
       remotePins.repeat("/isWindowShared/read", 1000, result => {
         if (result == 0){
-          application.distribute("changeImageURL", {url: "assets/window.png"});
+          application.distribute("changeImageURL", {url: "assets/header.png"});
         } else {
-          application.distribute("changeImageURL", {url: "assets/window_notification.png"});
+          application.distribute("changeImageURL", {url: "assets/header_notification.png"});
         }
       });
     }
