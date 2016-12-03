@@ -95,8 +95,6 @@ let state = {
 
 Handler.bind("/syncColorToCompanion", Behavior({
   onInvoke: function(handler, message){
-    // application.distribute("onReadSensor", data);
-
     remotePins.invoke("/colorSensor/getColor", result => {
       remotePins.invoke("/alpha/read", value => {
         state.locations[currentLocation][currentWindow].r = result.r;
@@ -107,9 +105,6 @@ Handler.bind("/syncColorToCompanion", Behavior({
         application.add(new SpecificWindow({ state: state, locationName: currentLocation, windowName: currentWindow }));
       });
     });
-
-    // updatingColorLabel.string = "Updating Color...";
-    // application.invoke(new Message("/doneSyncingColor"));
   }
 }));
 
@@ -188,32 +183,46 @@ application.behavior = Behavior({
 		application.empty();
     application.add(new FillScreen({ state: state, locationName: currentLocation, windowName: currentWindow }));
 	},
-
-
   onLaunch(application) {
     application.add(new WaitingForDeviceScreen());
     let discoveryInstance = Pins.discover(
-        connectionDesc => {
-          trace("ah");
-            if (connectionDesc.name == "smart-window-pins") {
-                trace("Connecting to remote pins\n");
-                remotePins = Pins.connect(connectionDesc);
-                application.empty();
-                application.add(new LocationScreen({ state: state }));
-            }
-        },
-        connectionDesc => {
-            if (connectionDesc.name == "smart-window-pins") {
-                trace("Disconnected from remote pins\n");
-                remotePins = undefined;
-                application.empty();
-                application.add(new ErrorScreen());
-            }
-        }
+      connectionDesc => {
+        trace("ah");
+          if (connectionDesc.name == "smart-window-pins") {
+              trace("Connecting to remote pins\n");
+              remotePins = Pins.connect(connectionDesc);
+              application.empty();
+              application.add(new LocationScreen({ state: state }));
+              application.distribute("readChoice");
+          }
+      },
+      connectionDesc => {
+          if (connectionDesc.name == "smart-window-pins") {
+              trace("Disconnected from remote pins\n");
+              remotePins = undefined;
+              application.empty();
+              application.add(new ErrorScreen());
+          }
+      }
     );
     application.shared = true;
     application.discover("sw-device.project.kinoma.marvell.com");
   },
+	readChoice(application, value) {
+    if (remotePins) {
+      remotePins.repeat("/choice/read", 500, result => {
+        trace("result is AHHHHHHHHHH" + result + "\n");
+        if(result==0){
+          application.distribute("changeImageURL", {url: "assets/window.png"});
+          trace("temp equals 0"+"\n");
+        }
+        if(result==1){
+          application.distribute("changeImageURL", {url: "assets/window_notification.png"});
+          trace("temp equals 1"+"\n");
+        }
+      });
+    }
+	},
   onQuit(application) {
      trace("URL: " + deviceURL + "\n");
      application.shared = false;
