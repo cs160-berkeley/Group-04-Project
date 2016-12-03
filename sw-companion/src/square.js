@@ -21,7 +21,8 @@ let square = Container.template($ => ({
 		}),
 		new Text({
 			top: 90, left: 0, right: 0,
-			string: $.name, style: new Style({
+			string: ($.windowName) ? $.windowName : $.locationName,
+			style: new Style({
 				color: "black",
 				font: "20px"
 			})

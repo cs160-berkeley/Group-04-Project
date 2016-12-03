@@ -23,6 +23,19 @@ import SuccessScreen from 'successWindow';
 import FillScreen from 'fillScreen';
 import Pins from "pins";
 import Header from 'header';
+import { NotificationScreenTemplate } from "notificationScreen"
+import { NotificationScreenNotificationTemplate } from "notificationScreen"
+import ShareWindow from 'shareWindow';
+
+import {
+	WaitingForDeviceScreen,
+	ErrorScreen
+} from 'utilScreens';
+
+import {
+	mediumTextStyle,
+	whiteSkin
+} from 'utils';
 
 var deviceURL = "";
 var currentLocation = "";
@@ -51,29 +64,31 @@ Handler.bind("/forget", Behavior({
 }));
 
 let state = {
-	"Office": {
-		"Window 1": {
-			r: 255,
-			g: 0,
-			b: 0,
-			a: 0.5,
-      updatingColorFromDevice: true,
+	locations: {
+		"Office": {
+			"Window 1": {
+				r: 255,
+				g: 0,
+				b: 0,
+				a: 0.5,
+	      		updatingColorFromDevice: true,
+			},
+			"Window 2": {
+				r: 0,
+				g: 100,
+				b: 48,
+				a: 0.9,
+	      		updatingColorFromDevice: true,
+			}
 		},
-		"Window 2": {
-			r: 0,
-			g: 100,
-			b: 48,
-			a: 0.9,
-      updatingColorFromDevice: true,
-		}
-	},
-	"Home": {
-		"Window 1": {
-			r: 185,
-			g: 94,
-			b: 23,
-			a: 0.8,
-      updatingColorFromDevice: true,
+		"Home": {
+			"Window 1": {
+				r: 185,
+				g: 94,
+				b: 23,
+				a: 0.8,
+	      		updatingColorFromDevice: true,
+			}
 		}
 	}
 };
@@ -84,12 +99,12 @@ Handler.bind("/syncColorToCompanion", Behavior({
 
     remotePins.invoke("/colorSensor/getColor", result => {
       remotePins.invoke("/alpha/read", value => {
-        state[currentLocation][currentWindow].r = result.r;
-        state[currentLocation][currentWindow].g = result.g;
-        state[currentLocation][currentWindow].b = result.b;
-        state[currentLocation][currentWindow].a = value;
+        state.locations[currentLocation][currentWindow].r = result.r;
+        state.locations[currentLocation][currentWindow].g = result.g;
+        state.locations[currentLocation][currentWindow].b = result.b;
+        state.locations[currentLocation][currentWindow].a = value;
         application.empty();
-        application.add(new SpecificWindow({ state: state, locationName: currentLocation, name: currentWindow }));
+        application.add(new SpecificWindow({ state: state, locationName: currentLocation, windowName: currentWindow }));
       });
     });
 
@@ -108,13 +123,22 @@ application.behavior = Behavior({
 	},
 	onSuccessAdd: (container, data) => {
 		application.empty();
-    remotePins.invoke("/windowSynched/write", 1);
+    	remotePins.invoke("/windowSynched/write", 1);
 		application.add(new SuccessScreen(data));
 	},
+	onSuccessShare: (container, data) => {
+ 		application.empty();
+ 		//remotePins.invoke("", 1);
+ 		application.add(new SuccessScreen(data));
+ 	},
+ 	onShareWindow: (container, data) => {
+ 		application.empty();
+ 		application.add(new ShareWindow(data));
+ 	},
   	onFinishSuccess:(container, data) => {
 		application.empty();
     currentLocation = data.locationName;
-    currentWindow = data.name;
+    currentWindow = data.windowName;
 		application.add(new SpecificWindow(data));
 	},
 	onSquarePressed: (container, data) => {
@@ -126,7 +150,7 @@ application.behavior = Behavior({
 			case "Window":
 				application.add(new SpecificWindow(data));
         currentLocation = data.locationName;
-        currentWindow = data.name;
+        currentWindow = data.windowName;
 				break;
 			default:
 				application.add(new LocationScreen(data));
@@ -143,12 +167,16 @@ application.behavior = Behavior({
 				break;
 			case "Specific Window":
         currentLocation = data.locationName;
-        currentWindow = data.name;
+        currentWindow = data.windowName;
+
+        trace(currentLocation + "\n");
+        trace(currentWindow + "\n");
+
         application.invoke(new Message(deviceURL + "syncColorToDevice?" + serializeQuery({
-          r: state[currentLocation][currentWindow].r,
-          g: state[currentLocation][currentWindow].g,
-          b: state[currentLocation][currentWindow].b,
-          a: state[currentLocation][currentWindow].a
+          r: state.locations[currentLocation][currentWindow].r,
+          g: state.locations[currentLocation][currentWindow].g,
+          b: state.locations[currentLocation][currentWindow].b,
+          a: state.locations[currentLocation][currentWindow].a
         })));
 				application.add(new SpecificWindow(data));
 				break;
@@ -159,20 +187,27 @@ application.behavior = Behavior({
 	onFillPressed: (container, data) => {
 		application.empty();
     application.add(new FillScreen({ state: state, locationName: currentLocation, windowName: currentWindow }));
-      // application.distribute("onReadSensor", data);
 	},
-	onLaunch(application) {
+
+
+  onLaunch(application) {
+    application.add(new WaitingForDeviceScreen());
     let discoveryInstance = Pins.discover(
         connectionDesc => {
+          trace("ah");
             if (connectionDesc.name == "smart-window-pins") {
                 trace("Connecting to remote pins\n");
                 remotePins = Pins.connect(connectionDesc);
+                application.empty();
+                application.add(new LocationScreen({ state: state }));
             }
         },
         connectionDesc => {
             if (connectionDesc.name == "smart-window-pins") {
                 trace("Disconnected from remote pins\n");
                 remotePins = undefined;
+                application.empty();
+                application.add(new ErrorScreen());
             }
         }
     );
@@ -184,21 +219,4 @@ application.behavior = Behavior({
      application.shared = false;
      application.forget("sw-device.project.kinoma.marvell.com");
   },
-  // onReadSensor(application, data) {
-  //   remotePins.repeat("/colorSensor/getColor", 33, result => {
-  //       remotePins.invoke("/alpha/read", value => {
-  //         if (data.state[data.locationName][data.windowName].updatingColorFromDevice) {
-  //           // this.gotColor(application, result, value);
-  //           data.state[data.locationName][data.windowName].r = result.r;
-  //           data.state[data.locationName][data.windowName].g = result.g;
-  //           data.state[data.locationName][data.windowName].b = result.b;
-  //           data.state[data.locationName][data.windowName].a = value;
-  //           application.empty();
-  //           application.add(new FillScreen(data));
-  //         }
-  //       });
-  //     });
-  // }
 });
-
-application.add(new LocationScreen({ state: state }));

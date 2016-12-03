@@ -33,11 +33,7 @@ let SuccessContainerTemplate = Container.template($ => ({
     active: true,
     behavior: Behavior({
       onTouchEnded: (content) => {
-        application.distribute('onFinishSuccess', {
-          name: $.windowName,
-          locationName: $.name,
-          state: $.state
-        });
+        application.distribute('onFinishSuccess', $);
       }
     })
 

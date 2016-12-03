@@ -1,3 +1,4 @@
+
 import {
     FieldScrollerBehavior,
     FieldLabelBehavior
@@ -26,6 +27,8 @@ let blackStyle = new Style({color:'black', font: 'bold 24px'})
 let fieldLabelSkin = new Skin({ fill: ['transparent', 'transparent', '#C0C0C0', '#acd473'] });
 let headerSkin = new Skin({ fill: "#2D9CDB" });
 
+let shareName;
+
 let MyField = Container.template($ => ({
     width: 250, height: 75, skin: nameInputSkin, contents: [
         Scroller($, {
@@ -40,13 +43,14 @@ let MyField = Container.template($ => ({
                         onEdited(label) {
                             let data = this.data;
                             data.name = label.string;
+                            shareName = label.string;
                             label.container.hint.visible = (data.name.length == 0);
                         }
                     },
                 }),
                 Label($, {
                     left: 4, right: 4, top: 4, bottom: 4, style: fieldHintStyle,
-                    string: "Enter Code on Window", name: "hint"
+                    string: "Enter Name of User", name: "hint"
                 }),
 
             ]
@@ -56,7 +60,7 @@ let MyField = Container.template($ => ({
 
 let state;
 
-let AddWindowContainerTemplate = Container.template($ => {
+let ShareWindow = Container.template($ => {
 	state = $.state;
 	return {
 	    left: 0, right: 0, top: 0, bottom: 0,
@@ -66,9 +70,9 @@ let AddWindowContainerTemplate = Container.template($ => {
 	      new Label({
 	      	left: 0, right: 0, bottom: 125, top: 0,
 	      	style: blackStyle,
-	      	string: "Add a Window to " + $.locationName
+	      	string: "Share Window"
 	      }),
-	      new MyField({name: ""}),
+	      MyField({name: ""}),
 	      new Line({
 				top: 420, height: 60, width: 320,
 				skin: whiteSkin,
@@ -100,9 +104,10 @@ let AddWindowContainerTemplate = Container.template($ => {
 						behavior: Behavior({
 							onTouchEnded: (content) => {
 								application.distribute('onBackPressed', {
-									screen: "Location",
-									locationName: $.locationName,
-									state: state
+									screen: "Specific Window",
+									state: state,
+									windowName: $.windowName,
+									locationName: $.locationName
 								});
 							}
 						})
@@ -127,24 +132,18 @@ let AddWindowContainerTemplate = Container.template($ => {
 							new Text({
 								left: 0,
 								right: 0,
-								string: "Sync",
+								string: "Share",
 								style: mediumTextStyle
 							})
 						],
 						behavior: Behavior({
 							onTouchEnded: (content) => {
-								let colorData = {
-									r: 0,
-									g: 0,
-									b: 0,
-									a: 0,
-                  					updatingColorFromDevice: true,
-								};
-								let windowName = "Window " + ($.numWindows + 1);
-								state.locations[$.locationName][windowName] = colorData;
-								application.distribute('onSuccessAdd', {
+								state.shareName = shareName;
+								state.shareWindow = state.name;
+								application.distribute('onSuccessShare', {
+									shareName: shareName,
 									locationName: $.locationName,
-									windowName: windowName,
+									windowName: $.windowName,
 									state: state
 								});
 							}
@@ -162,4 +161,4 @@ let AddWindowContainerTemplate = Container.template($ => {
 	}
 });
 
-export default AddWindowContainerTemplate;
+export default ShareWindow;

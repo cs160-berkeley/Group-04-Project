@@ -153,15 +153,22 @@ let FillWindow = Column.template($ => {
 });
 
 
-var updatingColorLabel = Label.template($ => ({
-	top:20, string: "WINDOW CODE",
+let updatingColorLabel = Label.template($ => ({
+	top: 20, string: "Enter this code on the app: ",
 	style: smallBlackStyle
 }));
+
+let codeLabel = Label.template($ => ({
+	top: 30, string: "3F9WINDOW08D",
+	style: mediumTextStyle
+}));
+
 let MainContainer = Column.template($ => ({
   left: 0, right: 0, top: 0, height: 200, skin: whiteSkin,
   contents: [
     new Header(),
-    new updatingColorLabel()
+    new updatingColorLabel(),
+    new codeLabel()
   ]
 }));
 
@@ -169,23 +176,21 @@ var buttonReader;
 let pollWindow = (result) => {
 	if (result) {
     	trace("Button on.\n");
+    	application.empty();
     	application.add(new MainContainer());
     	buttonReader.close();
 	} else {
-    	// trace("Button off.\n");
 	}
 };
 
 var syncButtonReader;
 let pollSyncWindow = (result) => {
   if (result) {
-      trace("Sync Button ON.\n");
       application.empty();
       colorString = "rgba(255, 255, 255, 1)";
       application.add(new SpecificWindow());
       syncButtonReader.close();
   } else {
-      // trace("Sync Button OFF.\n");
   }
 };
 
@@ -235,6 +240,20 @@ Handler.bind("/doneUpdating", {
     }
 });
 
+let initialContainer = Container.template($ => ({
+	top: 0, bottom: 0, left: 0, right: 0,
+	skin: whiteSkin,
+	contents: [
+		new Header(),
+		new Label({
+			top: 0, bottom: 0,
+			left: 0, right: 0,
+			style: mediumTextStyle,
+			string: "Waiting for Window to be Added..."
+		})
+	]
+}));
+
 application.behavior = Behavior({
 	gotColor(application, result, alpha) {
     let r = Math.floor(result.r).toString();
@@ -281,6 +300,7 @@ application.behavior = Behavior({
     application.skin = whiteSkin;
 	},
 	onPinsConfigured(application, success) {
+		application.add(new initialContainer());
 		if (success) {
 			Pins.repeat("/colorSensor/getColor", 150, result => {
         Pins.invoke("/alpha/read", value => {
