@@ -25,6 +25,7 @@ import Pins from "pins";
 import Header from 'header';
 import { NotificationScreenTemplate } from "notificationScreen"
 import { NotificationScreenNotificationTemplate } from "notificationScreen"
+import ShareWindow from 'shareWindow';
 
 var deviceURL = "";
 
@@ -90,6 +91,15 @@ application.behavior = Behavior({
 		application.empty();
     remotePins.invoke("/windowSynched/write", 1);
 		application.add(new SuccessScreen(data));
+	},
+	onSuccessShare: (container, data) => {
+		application.empty();
+		//remotePins.invoke("", 1);
+		application.add(new SuccessScreen(data));
+	},
+	onShareWindow: (container, data) => {
+		application.empty();
+		application.add(new ShareWindow(data));
 	},
   	onFinishSuccess:(container, data) => {
 		application.empty();

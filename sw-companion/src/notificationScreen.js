@@ -1,7 +1,4 @@
-import {
-    VerticalScroller,
-    VerticalScrollbar,
-} from 'scroller';
+
 import Header from 'header';
 import {
 	whiteSkin,
@@ -67,6 +64,9 @@ export var NotificationScreenTemplate = Column.template($ => ({
 			behavior: Behavior ({
 				onCreate: function(container, data) {
 					state = $.state;
+					if ($.shareWindow.length > 0) {
+						container.add(new NotificationScreenNotificationTemplate({ name: state.shareName, windowName: shareWindow }));
+					}
 					//container.add(new NotificationScreenNotificationTemplate({ name: "Monkey" }));
 					//container.add(new NotificationScreenNotificationTemplate({ name: data.name, number: data.number }));
 				},
@@ -75,6 +75,8 @@ export var NotificationScreenTemplate = Column.template($ => ({
 				},
 				zdestroy: function(container, data) {
 					eval("container.remove(container." + data.name + ");");
+					state.shareName = "";
+					state.shareWindow = "";
 				}
 			}),
 		})

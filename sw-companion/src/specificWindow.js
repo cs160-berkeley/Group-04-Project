@@ -48,7 +48,16 @@ let SpecificWindow = Column.template($ => {
 						url: "assets/share.png",
 						aspect: "fit",
 						height: 30,
-						left: "-100"
+						left: "-100",
+						active: true,
+						behavior: Behavior({
+							onTouchEnded: (content) => {
+								application.distribute('onShareWindow', {
+									state: $.state,
+									name: $.name
+								});
+							}
+						})	
 					}),
 				]
 			}),
