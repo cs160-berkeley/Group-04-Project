@@ -15,11 +15,11 @@ let LocationScreen = Column.template($ => {
 	let secondSquareContainer = new SquareContainer({
 		top: 30
 	});
-	for (let location in $.state) {
-		if ($.state.hasOwnProperty(location)) {
+	for (let location in $.state.locations) {
+		if ($.state.locations.hasOwnProperty(location)) {
 			numWindows += 1;
 			let square = new Square({
-				name: location,
+				locationName: location,
 				type: "Location",
 				state: $.state
 			});

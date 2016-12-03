@@ -101,7 +101,7 @@ let AddWindowContainerTemplate = Container.template($ => {
 							onTouchEnded: (content) => {
 								application.distribute('onBackPressed', {
 									screen: "Location",
-									name: $.locationName,
+									locationName: $.locationName,
 									state: state
 								});
 							}
@@ -138,12 +138,13 @@ let AddWindowContainerTemplate = Container.template($ => {
 									g: 0,
 									b: 0,
 									a: 0,
-                  updatingColorFromDevice: true,
+                  					updatingColorFromDevice: true,
 								};
 								let windowName = "Window " + ($.numWindows + 1);
-								state[$.locationName][windowName] = colorData;
+								state.locations[$.locationName][windowName] = colorData;
 								application.distribute('onSuccessAdd', {
-									name: $.locationName,
+									locationName: $.locationName,
+									windowName: windowName,
 									state: state
 								});
 							}

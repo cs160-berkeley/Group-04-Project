@@ -10,7 +10,7 @@ import {
 } from 'utils';
 
 let SpecificWindow = Column.template($ => {
-	let data = $.state[$.locationName][$.name];
+	let data = $.state.locations[$.locationName][$.windowName];
 	let r = Math.floor(data.r).toString();
 	let g = Math.floor(data.g).toString();
 	let b = Math.floor(data.b).toString();
@@ -33,7 +33,7 @@ let SpecificWindow = Column.template($ => {
 							onTouchEnded: (content) => {
 								application.distribute('onBackPressed', {
 									screen: "Location",
-									name: $.locationName,
+									locationName: $.locationName,
 									state: $.state
 								});
 							}
@@ -41,7 +41,7 @@ let SpecificWindow = Column.template($ => {
 					}),
 					new Text({
 						left: "-100", right: 0, top: 8,
-						string: $.name,
+						string: $.windowName,
 						style: bigTextStyle
 					}),
 					new Picture({
@@ -54,7 +54,8 @@ let SpecificWindow = Column.template($ => {
 							onTouchEnded: (content) => {
 								application.distribute('onShareWindow', {
 									state: $.state,
-									name: $.name
+									windowName: $.windowName,
+									locationName: $.locationName
 								});
 							}
 						})	
@@ -131,7 +132,7 @@ let SpecificWindow = Column.template($ => {
 								application.distribute('onFillPressed', {
 									state: $.state,
 									locationName: $.locationName,
-									windowName: $.name
+									windowName: $.windowName
 								});
 							}
 						})

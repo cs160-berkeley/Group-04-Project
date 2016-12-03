@@ -82,19 +82,19 @@ let SliderContainer = Column.template($ => ({
         onChanged(canvas, value, color) {
           if (color == "red") {
             let redVal = Math.floor(value);
-            state[$.locationName][$.windowName].r = redVal;
+            state.locations[$.locationName][$.windowName].r = redVal;
           } else if (color == "green") {
             let greenVal = Math.floor(value);
-            state[$.locationName][$.windowName].g = greenVal;
+            state.locations[$.locationName][$.windowName].g = greenVal;
           } else if (color == "blue") {
             let blueVal = Math.floor(value);
-            state[$.locationName][$.windowName].b = blueVal;
+            state.locations[$.locationName][$.windowName].b = blueVal;
           } else if (color == "alpha") {
             let alphaVal = value.toFixed(2);
-            state[$.locationName][$.windowName].a = alphaVal;
+            state.locations[$.locationName][$.windowName].a = alphaVal;
           }
 
-          let data = state[$.locationName][$.windowName];
+          let data = state.locations[$.locationName][$.windowName];
 
           data.updatingColorFromDevice = false;
           let colorString = "rgba(" + data.r + "," + data.g + "," + data.b + "," + data.a + ")";
@@ -116,7 +116,7 @@ let alphaLabel;
 
 let FillScreen = Container.template($ => {
 	state = $.state;
-	let data = state[$.locationName][$.windowName];
+	let data = state.locations[$.locationName][$.windowName];
 	let r = Math.floor(data.r).toString();
 	let g = Math.floor(data.g).toString();
 	let b = Math.floor(data.b).toString();

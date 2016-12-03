@@ -104,8 +104,10 @@ let ShareWindow = Container.template($ => {
 						behavior: Behavior({
 							onTouchEnded: (content) => {
 								application.distribute('onBackPressed', {
-									screen: "Home",
-									state: state
+									screen: "Specific Window",
+									state: state,
+									windowName: $.windowName,
+									locationName: $.locationName
 								});
 							}
 						})
@@ -140,7 +142,8 @@ let ShareWindow = Container.template($ => {
 								state.shareWindow = state.name;
 								application.distribute('onSuccessShare', {
 									shareName: shareName,
-									name: $.name,
+									locationName: $.locationName,
+									windowName: $.windowName,
 									state: state
 								});
 							}

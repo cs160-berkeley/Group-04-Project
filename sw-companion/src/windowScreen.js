@@ -16,7 +16,7 @@ let WindowScreen = Column.template($ => {
 		top: 30
 	});
 	
-	let windows = $.state[$.name];
+	let windows = $.state.locations[$.locationName];
 	for (let window in windows) {
 		if (windows.hasOwnProperty(window)) {
 			numWindows += 1;
@@ -27,10 +27,10 @@ let WindowScreen = Column.template($ => {
 			let a = colorData.a.toString();
 			let colorString = "rgba(" + r + "," + g + "," + b + "," + a + ")";
 			let square = new Square({
-				name: window,
+				windowName: window,
 				type: "Window",
 				state: $.state,
-				locationName: $.name,
+				locationName: $.locationName,
 				fill: colorString
 			});
 			if (numWindows > 2) {
@@ -64,7 +64,7 @@ let WindowScreen = Column.template($ => {
 					}),
 					new Text({
 						left: "-120", right: 0, top: 8,
-						string: $.name,
+						string: $.locationName,
 						style: bigTextStyle
 					}),
 					new Picture({
@@ -76,7 +76,7 @@ let WindowScreen = Column.template($ => {
 						behavior: Behavior({
 							onTouchEnded: (content) => {
 								application.distribute('onAddWindow', {
-									locationName: $.name,
+									locationName: $.locationName,
 									state: $.state,
 									numWindows: numWindows
 								});

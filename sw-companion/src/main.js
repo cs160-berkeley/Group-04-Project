@@ -23,9 +23,7 @@ import SuccessScreen from 'successWindow';
 import FillScreen from 'fillScreen';
 import Pins from "pins";
 import Header from 'header';
-import { NotificationScreenTemplate } from "notificationScreen"
-import { NotificationScreenNotificationTemplate } from "notificationScreen"
-import ShareWindow from 'shareWindow';
+import { NotificationScreenTemplate } from "notificationScreen"import { NotificationScreenNotificationTemplate } from "notificationScreen"import ShareWindow from 'shareWindow';
 
 import {
 	WaitingForDeviceScreen,
@@ -62,29 +60,31 @@ Handler.bind("/forget", Behavior({
 }));
 
 let state = {
-	"Office": {
-		"Window 1": {
-			r: 255,
-			g: 0,
-			b: 0,
-			a: 0.5,
-      updatingColorFromDevice: true,
+	locations: {
+		"Office": {
+			"Window 1": {
+				r: 255,
+				g: 0,
+				b: 0,
+				a: 0.5,
+	      		updatingColorFromDevice: true,
+			},
+			"Window 2": {
+				r: 0,
+				g: 100,
+				b: 48,
+				a: 0.9,
+	      		updatingColorFromDevice: true,
+			}
 		},
-		"Window 2": {
-			r: 0,
-			g: 100,
-			b: 48,
-			a: 0.9,
-      updatingColorFromDevice: true,
-		}
-	},
-	"Home": {
-		"Window 1": {
-			r: 185,
-			g: 94,
-			b: 23,
-			a: 0.8,
-      updatingColorFromDevice: true,
+		"Home": {
+			"Window 1": {
+				r: 185,
+				g: 94,
+				b: 23,
+				a: 0.8,
+	      		updatingColorFromDevice: true,
+			}
 		}
 	}
 };
@@ -102,18 +102,10 @@ application.behavior = Behavior({
     	remotePins.invoke("/windowSynched/write", 1);
 		application.add(new SuccessScreen(data));
 	},
-	onSuccessShare: (container, data) => {
-		application.empty();
-		//remotePins.invoke("", 1);
-		application.add(new SuccessScreen(data));
-	},
-	onShareWindow: (container, data) => {
-		application.empty();
-		application.add(new ShareWindow(data));
-	},
+	onSuccessShare: (container, data) => { 		application.empty(); 		//remotePins.invoke("", 1); 		application.add(new SuccessScreen(data)); 	}, 	onShareWindow: (container, data) => { 		application.empty(); 		application.add(new ShareWindow(data)); 	},
   	onFinishSuccess:(container, data) => {
 		application.empty();
-		application.add(new WindowScreen(data));
+		application.add(new SpecificWindow(data));
 	},
 	onSquarePressed: (container, data) => {
 		application.empty();
@@ -177,12 +169,12 @@ application.behavior = Behavior({
   onReadSensor(application, data) {
     remotePins.repeat("/colorSensor/getColor", 33, result => {
         remotePins.invoke("/alpha/read", value => {
-          if (data.state[data.locationName][data.windowName].updatingColorFromDevice) {
+          if (data.state.locations[data.locationName][data.windowName].updatingColorFromDevice) {
             // this.gotColor(application, result, value);
-            data.state[data.locationName][data.windowName].r = result.r;
-            data.state[data.locationName][data.windowName].g = result.g;
-            data.state[data.locationName][data.windowName].b = result.b;
-            data.state[data.locationName][data.windowName].a = value;
+            data.state.locations[data.locationName][data.windowName].r = result.r;
+            data.state.locations[data.locationName][data.windowName].g = result.g;
+            data.state.locations[data.locationName][data.windowName].b = result.b;
+            data.state.locations[data.locationName][data.windowName].a = value;
             application.empty();
             application.add(new FillScreen(data));
           }
