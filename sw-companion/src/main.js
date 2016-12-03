@@ -164,9 +164,6 @@ application.behavior = Behavior({
         currentLocation = data.locationName;
         currentWindow = data.windowName;
 
-        trace(currentLocation + "\n");
-        trace(currentWindow + "\n");
-
         application.invoke(new Message(deviceURL + "syncColorToDevice?" + serializeQuery({
           r: state.locations[currentLocation][currentWindow].r,
           g: state.locations[currentLocation][currentWindow].g,
