@@ -56,7 +56,7 @@ let MyField = Container.template($ => ({
 
 let state;
 
-let MainContainerTemplate = Container.template($ => {
+let AddWindowContainerTemplate = Container.template($ => {
 	state = $.state;
 	return {
 	    left: 0, right: 0, top: 0, bottom: 0,
@@ -161,4 +161,4 @@ let MainContainerTemplate = Container.template($ => {
 	}
 });
 
-export default MainContainerTemplate;
+export default AddWindowContainerTemplate;
