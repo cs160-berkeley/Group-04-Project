@@ -13,6 +13,8 @@ import {
 
 /* APPLICATION */
 
+var companionURL = "";
+
 var onFillScreen = false;
 let colorString = "";
 
@@ -139,6 +141,7 @@ let FillWindow = Column.template($ => {
               onTouchEnded: (content) => {
                 // TODO: Sync with companion app
                 trace("Sync PRESSED \n");
+                application.invoke(new Message(companionURL + "syncColorToCompanion"));
                 application.empty();
                 onFillScreen = false;
                 application.add(new SpecificWindow());
@@ -171,7 +174,7 @@ let pollWindow = (result) => {
     	application.add(new MainContainer());
     	buttonReader.close();
 	} else {
-    	trace("Button off.\n");
+    	// trace("Button off.\n");
 	}
 };
 
@@ -184,9 +187,40 @@ let pollSyncWindow = (result) => {
       application.add(new SpecificWindow());
       syncButtonReader.close();
   } else {
-      trace("Sync Button OFF.\n");
+      // trace("Sync Button OFF.\n");
   }
 };
+
+Handler.bind("/discover", Behavior({
+  onInvoke: function(handler, message){
+    companionURL = JSON.parse(message.requestText).url;
+    trace("CONNECTED TO COMPANION APP\n");
+  }
+}));
+
+Handler.bind("/forget", Behavior({
+  onInvoke: function(handler, message){
+    companionURL = "";
+    trace("FORGET COMPANION APP\n");
+  }
+}));
+
+Handler.bind("/syncColorToDevice", Behavior({
+  onInvoke: function(handler, message){
+    trace("SYNCHING COLOR TO DEVICE\n");
+
+    var query = parseQuery(message.query);
+    trace("red: " + query.r + "\n");
+
+    colorString = "rgba(" + query.r + "," + query.g + "," + query.b + "," + query.a + ")";
+
+    application.empty();
+    application.add(new FillWindow());
+
+    // updatingColorLabel.string = "Updating Color...";
+    // application.invoke(new Message("/doneSyncingColor"));
+  }
+}));
 
 Handler.bind("/updateColor", Behavior({
   onInvoke: function(handler, message){
@@ -247,6 +281,7 @@ application.behavior = Behavior({
              }
           },
 		}, success => this.onPinsConfigured(application, success));
+    application.discover("sw-companion.project.kinoma.marvell.com");
     application.shared = true;
     application.skin = whiteSkin;
 	},
@@ -268,6 +303,8 @@ application.behavior = Behavior({
 	},
   onQuit(application) {
     application.shared = false;
+    trace("URL: " + companionURL + "\n");
+    application.forget("sw-companion.project.kinoma.marvell.com");
   }
 });
 
