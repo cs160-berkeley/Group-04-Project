@@ -27,6 +27,16 @@ import { NotificationScreenTemplate } from "notificationScreen"
 import { NotificationScreenNotificationTemplate } from "notificationScreen"
 import ShareWindow from 'shareWindow';
 
+import {
+	WaitingForDeviceScreen,
+	ErrorScreen
+} from 'utilScreens';
+
+import {
+	mediumTextStyle,
+	whiteSkin
+} from 'utils';
+
 var deviceURL = "";
 
 Handler.bind("/discover", Behavior({
@@ -89,7 +99,7 @@ application.behavior = Behavior({
 	},
 	onSuccessAdd: (container, data) => {
 		application.empty();
-    remotePins.invoke("/windowSynched/write", 1);
+    	remotePins.invoke("/windowSynched/write", 1);
 		application.add(new SuccessScreen(data));
 	},
 	onSuccessShare: (container, data) => {
@@ -136,28 +146,33 @@ application.behavior = Behavior({
 	},
 	onFillPressed: (container, data) => {
 		application.empty();
-      application.distribute("onReadSensor", data);
+      	application.distribute("onReadSensor", data);
 	},
 	onLaunch(application) {
-    let discoveryInstance = Pins.discover(
-        connectionDesc => {
-            if (connectionDesc.name == "smart-window-pins") {
-                trace("Connecting to remote pins\n");
-                remotePins = Pins.connect(connectionDesc);
-            }
-        },
-        connectionDesc => {
-            if (connectionDesc.name == "smart-window-pins") {
-                trace("Disconnected from remote pins\n");
-                remotePins = undefined;
-            }
-        }
-    );
-    application.discover("sw-device.project.kinoma.marvell.com");
+		application.add(new WaitingForDeviceScreen());
+    	let discoveryInstance = Pins.discover(
+        	connectionDesc => {
+	        	trace("ah");
+	            if (connectionDesc.name == "smart-window-pins") {
+	                trace("Connecting to remote pins\n");
+	                remotePins = Pins.connect(connectionDesc);
+	                application.empty();
+	                application.add(new LocationScreen({ state: state }));
+	            }
+        	},
+	        connectionDesc => {
+	            if (connectionDesc.name == "smart-window-pins") {
+	                trace("Disconnected from remote pins\n");
+	                remotePins = undefined;
+	                application.empty();
+	                application.add(new ErrorScreen());
+	            }
+	        }
+    	);
   },
   onQuit(application) {
      trace("URL: " + deviceURL + "\n");
-     application.forget("sw-device.project.kinoma.marvell.com");
+     //application.forget("sw-device.project.kinoma.marvell.com");
   },
   onReadSensor(application, data) {
     remotePins.repeat("/colorSensor/getColor", 33, result => {
@@ -175,5 +190,3 @@ application.behavior = Behavior({
       });
   }
 });
-
-application.add(new LocationScreen({ state: state }));
