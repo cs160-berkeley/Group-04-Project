@@ -76,33 +76,9 @@ let SpecificWindow = Column.template($ => {
 				})
 			}),
 			new Line({
-				top: 40, height: 60, width: 320,
+				top: 30, height: 40, width: 230,
 				skin: whiteSkin,
 				contents: [
-					new Container({
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						skin: new Skin({
-							stroke: "black",
-							borders: {
-								left: 2,
-								right: 2,
-								top: 2,
-								bottom: 2
-							},
-							fill: leftButtonColor
-						}),
-						contents: [
-							new Text({
-								left: 0,
-								right: 0,
-								string: "Image",
-								style: mediumTextStyle
-							})
-						]
-					}),
 					new Container({
 						top: 0,
 						left: 0,

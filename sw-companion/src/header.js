@@ -12,8 +12,9 @@ let notification_image = Picture.template($ => ({
 
   behavior:Behavior({
     changeImageURL (container, data) {
-      trace("yo");
-      container.url = data.url;
+      if (container.url !== data.url) {
+      	container.url = data.url;
+      }
   }})
 }));
 
