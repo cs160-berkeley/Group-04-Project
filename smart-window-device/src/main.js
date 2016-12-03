@@ -168,6 +168,7 @@ var buttonReader;
 let pollWindow = (result) => {
 	if (result) {
     	trace("Button on.\n");
+    	application.empty();
     	application.add(new MainContainer());
     	buttonReader.close();
 	} else {
@@ -205,6 +206,20 @@ Handler.bind("/doneUpdating", {
         updatingColorLabel.string = " ";
     }
 });
+
+let initialContainer = Container.template($ => ({
+	top: 0, bottom: 0, left: 0, right: 0,
+	skin: whiteSkin,
+	contents: [
+		new Header(),
+		new Label({
+			top: 0, bottom: 0,
+			left: 0, right: 0,
+			style: mediumTextStyle,
+			string: "Waiting for Window to be Added..."
+		})
+	]
+}));
 
 application.behavior = Behavior({
 	gotColor(application, result, alpha) {
@@ -251,6 +266,7 @@ application.behavior = Behavior({
     application.skin = whiteSkin;
 	},
 	onPinsConfigured(application, success) {
+		application.add(new initialContainer());
 		if (success) {
 			Pins.repeat("/colorSensor/getColor", 150, result => {
         Pins.invoke("/alpha/read", value => {
