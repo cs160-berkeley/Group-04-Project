@@ -131,7 +131,7 @@ application.behavior = Behavior({
     application.empty();
     application.add(new ShareWindow(data));
   },
-    onFinishSuccess:(container, data) => {
+  onFinishSuccess:(container, data) => {
     application.empty();
     currentLocation = data.locationName;
     currentWindow = data.windowName;
