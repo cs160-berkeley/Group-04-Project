@@ -141,11 +141,11 @@ application.behavior = Behavior({
             }
         }
     );
-    application.discover("sw-device.project.kinoma.marvell.com");
+    //application.discover("sw-device.project.kinoma.marvell.com");
   },
   onQuit(application) {
      trace("URL: " + deviceURL + "\n");
-     application.forget("sw-device.project.kinoma.marvell.com");
+     //application.forget("sw-device.project.kinoma.marvell.com");
   },
   onReadSensor(application, data) {
     remotePins.repeat("/colorSensor/getColor", 33, result => {

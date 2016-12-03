@@ -4,7 +4,8 @@ export let bigTextStyle = new Style({
 	font: "30px"
 });
 export let mediumTextStyle = new Style({
-	font: "24px"
+	font: "24px",
+	color: "black"
 });
 export let smallTextStyle = new Style({
 	font: "18px"
