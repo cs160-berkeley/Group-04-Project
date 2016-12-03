@@ -144,7 +144,8 @@ let MainContainerTemplate = Container.template($ => {
 								state[$.locationName][windowName] = colorData;
 								application.distribute('onSuccessAdd', {
 									name: $.locationName,
-									state: state
+									state: state,
+                  windowName: windowName
 								});
 							}
 						})

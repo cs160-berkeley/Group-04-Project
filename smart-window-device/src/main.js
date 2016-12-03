@@ -139,8 +139,6 @@ let FillWindow = Column.template($ => {
             ],
             behavior: Behavior({
               onTouchEnded: (content) => {
-                // TODO: Sync with companion app
-                trace("Sync PRESSED \n");
                 application.invoke(new Message(companionURL + "syncColorToCompanion"));
                 application.empty();
                 onFillScreen = false;
@@ -207,10 +205,7 @@ Handler.bind("/forget", Behavior({
 
 Handler.bind("/syncColorToDevice", Behavior({
   onInvoke: function(handler, message){
-    trace("SYNCHING COLOR TO DEVICE\n");
-
     var query = parseQuery(message.query);
-    trace("red: " + query.r + "\n");
 
     colorString = "rgba(" + query.r + "," + query.g + "," + query.b + "," + query.a + ")";
 

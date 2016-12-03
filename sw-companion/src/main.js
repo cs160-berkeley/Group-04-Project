@@ -80,7 +80,6 @@ let state = {
 
 Handler.bind("/syncColorToCompanion", Behavior({
   onInvoke: function(handler, message){
-    trace("SYNCHING COLOR\n");
     // application.distribute("onReadSensor", data);
 
     remotePins.invoke("/colorSensor/getColor", result => {
@@ -114,7 +113,9 @@ application.behavior = Behavior({
 	},
   	onFinishSuccess:(container, data) => {
 		application.empty();
-		application.add(new WindowScreen(data));
+    currentLocation = data.locationName;
+    currentWindow = data.name;
+		application.add(new SpecificWindow(data));
 	},
 	onSquarePressed: (container, data) => {
 		application.empty();
