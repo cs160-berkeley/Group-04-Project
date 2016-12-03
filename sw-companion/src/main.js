@@ -150,6 +150,7 @@ application.behavior = Behavior({
 	                remotePins = Pins.connect(connectionDesc);
 	                application.empty();
 	                application.add(new LocationScreen({ state: state }));
+	                application.distribute("readChoice");
 	            }
         	},
 	        connectionDesc => {
@@ -162,6 +163,28 @@ application.behavior = Behavior({
 	        }
     	);
   },
+		
+		readChoice(application, value) {
+		        if (remotePins) {
+		            remotePins.repeat("/choice/read", 500, result => {
+		                        trace("result is AHHHHHHHHHH" + result + "\n");
+		                        if(result==0){
+		                          application.distribute("changeImageURL", {url: "assets/window.png"});
+		                          trace("temp equals 0"+"\n");
+		                        }
+		                        if(result==1){
+		                          application.distribute("changeImageURL", {url: "assets/window_notification.png"});
+		                          trace("temp equals 1"+"\n");
+		                        }
+		            });
+		        }
+		    },
+
+
+
+
+
+
   onQuit(application) {
      trace("URL: " + deviceURL + "\n");
      //application.forget("sw-device.project.kinoma.marvell.com");

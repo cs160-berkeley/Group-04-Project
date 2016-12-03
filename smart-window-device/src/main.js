@@ -237,6 +237,16 @@ application.behavior = Behavior({
 	},
 	onLaunch(application) {
 		Pins.configure({
+
+         choice: {
+                  require: "Digital",
+                   pins: {
+                      power: {pin: 59, voltage: 3.3, type: "Power"},
+                      ground: {pin: 60, type: "Ground"},
+                      digital: {pin: 61, direction: "input"}
+                  }
+              },
+
 			colorSensor: {
 				require: "TCS34725",
 				pins: {
