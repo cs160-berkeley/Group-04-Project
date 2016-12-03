@@ -151,18 +151,20 @@ let FillWindow = Column.template($ => {
   }
 });
 
-var buttonReader;
 
-var updatingColorLabel = new Label({
-	left:0, right:0,
-	top:10, string: "HERE",
+var updatingColorLabel = Label.template($ => ({
+	top:20, string: "WINDOW CODE",
 	style: smallBlackStyle
-});
+}));
 let MainContainer = Column.template($ => ({
-  left: 10, right: 10, bottom: 10, height: 40,
-  contents: [ updatingColorLabel ]
+  left: 0, right: 0, top: 0, height: 200, skin: whiteSkin,
+  contents: [
+    new Header(),
+    new updatingColorLabel()
+  ]
 }));
 
+var buttonReader;
 let pollWindow = (result) => {
 	if (result) {
     	trace("Button on.\n");
@@ -173,6 +175,18 @@ let pollWindow = (result) => {
 	}
 };
 
+var syncButtonReader;
+let pollSyncWindow = (result) => {
+  if (result) {
+      trace("Sync Button ON.\n");
+      application.empty();
+      colorString = "rgba(255, 255, 255, 1)";
+      application.add(new SpecificWindow());
+      syncButtonReader.close();
+  } else {
+      trace("Sync Button OFF.\n");
+  }
+};
 
 Handler.bind("/updateColor", Behavior({
   onInvoke: function(handler, message){
@@ -225,10 +239,16 @@ application.behavior = Behavior({
 		            digital: { pin: 52, direction: "output" },
 		         }
 		      },
+          windowSynched: {
+             require: "Digital", // use built-in digital BLL
+             pins: {
+                ground: { pin: 53, type: "Ground" },
+                digital: { pin: 54, direction: "output" },
+             }
+          },
 		}, success => this.onPinsConfigured(application, success));
     application.shared = true;
-    colorString = "rgba(255, 255, 255, 1)";
-    application.add(new SpecificWindow());
+    application.skin = whiteSkin;
 	},
 	onPinsConfigured(application, success) {
 		if (success) {
@@ -241,6 +261,7 @@ application.behavior = Behavior({
       });
 			Pins.share("ws", {zeroconf: true, name: "smart-window-pins"});
 			buttonReader = Pins.repeat("/isWindowActive/read", 200, pollWindow);
+      syncButtonReader = Pins.repeat("/windowSynched/read", 200, pollSyncWindow);
 		}
 		else
 			trace("failed to configure pins\n");
