@@ -152,15 +152,22 @@ let FillWindow = Column.template($ => {
 });
 
 
-var updatingColorLabel = Label.template($ => ({
-	top:20, string: "WINDOW CODE",
+let updatingColorLabel = Label.template($ => ({
+	top: 20, string: "Enter this code on the app: ",
 	style: smallBlackStyle
 }));
+
+let codeLabel = Label.template($ => ({
+	top: 30, string: "3F9WINDOW08D",
+	style: mediumTextStyle
+}));
+
 let MainContainer = Column.template($ => ({
   left: 0, right: 0, top: 0, height: 200, skin: whiteSkin,
   contents: [
     new Header(),
-    new updatingColorLabel()
+    new updatingColorLabel(),
+    new codeLabel()
   ]
 }));
 
@@ -172,20 +179,17 @@ let pollWindow = (result) => {
     	application.add(new MainContainer());
     	buttonReader.close();
 	} else {
-    	trace("Button off.\n");
 	}
 };
 
 var syncButtonReader;
 let pollSyncWindow = (result) => {
   if (result) {
-      trace("Sync Button ON.\n");
       application.empty();
       colorString = "rgba(255, 255, 255, 1)";
       application.add(new SpecificWindow());
       syncButtonReader.close();
   } else {
-      trace("Sync Button OFF.\n");
   }
 };
 

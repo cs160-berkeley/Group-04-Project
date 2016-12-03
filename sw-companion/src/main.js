@@ -86,7 +86,7 @@ application.behavior = Behavior({
 	},
 	onSuccessAdd: (container, data) => {
 		application.empty();
-    remotePins.invoke("/windowSynched/write", 1);
+    	remotePins.invoke("/windowSynched/write", 1);
 		application.add(new SuccessScreen(data));
 	},
   	onFinishSuccess:(container, data) => {
@@ -129,6 +129,7 @@ application.behavior = Behavior({
 	onLaunch(application) {
     let discoveryInstance = Pins.discover(
         connectionDesc => {
+        	trace("ah");
             if (connectionDesc.name == "smart-window-pins") {
                 trace("Connecting to remote pins\n");
                 remotePins = Pins.connect(connectionDesc);
