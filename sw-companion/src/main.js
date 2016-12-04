@@ -23,8 +23,7 @@ import SuccessScreen from 'successWindow';
 import FillScreen from 'fillScreen';
 import Pins from "pins";
 import Header from 'header';
-import { NotificationScreenTemplate } from "notificationScreen"
-import { NotificationScreenNotificationTemplate } from "notificationScreen"
+import NotificationScreen from "notificationScreen";
 import ShareWindow from 'shareWindow';
 
 import {
@@ -94,7 +93,9 @@ let state = {
             updatingColorFromDevice: true,
       }
     }
-  }
+  },
+  shareWindow: "",
+  shareName: ""
 };
 
 Handler.bind("/syncColorToCompanion", Behavior({
@@ -128,7 +129,6 @@ application.behavior = Behavior({
   onAddWindow: (container, data) => {
     application.empty();
     remotePins.invoke("/isWindowActive/write", 1);
-    remotePins.invoke("/isWindowShared/write", 0);
     application.add(new AddWindowScreen(data));
   },
   onSuccessAdd: (container, data) => {
@@ -144,6 +144,13 @@ application.behavior = Behavior({
   onShareWindow: (container, data) => {
     application.empty();
     application.add(new ShareWindow(data));
+  },
+  onNotificationPressed: (container, data) => {
+      application.empty();
+      application.add(new NotificationScreen(data));
+  },
+  onRemoveNotification: (container) => {
+    remotePins.invoke("/isWindowShared/write", 0);
   },
   onFinishSuccess:(container, data) => {
     application.empty();
@@ -201,7 +208,6 @@ application.behavior = Behavior({
     application.add(new WaitingForDeviceScreen());
     let discoveryInstance = Pins.discover(
       connectionDesc => {
-        trace("ah");
           if (connectionDesc.name == "smart-window-pins") {
               trace("Connecting to remote pins\n");
               remotePins = Pins.connect(connectionDesc);

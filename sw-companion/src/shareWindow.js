@@ -66,7 +66,7 @@ let ShareWindow = Container.template($ => {
 	    left: 0, right: 0, top: 0, bottom: 0,
 	    skin: whiteSkin, active: true,
 	    contents: [
-	      new Header(),
+	      new Header({state: state}),
 	      new Label({
 	      	left: 0, right: 0, bottom: 125, top: 0,
 	      	style: blackStyle,
@@ -139,7 +139,7 @@ let ShareWindow = Container.template($ => {
 						behavior: Behavior({
 							onTouchEnded: (content) => {
 								state.shareName = shareName;
-								state.shareWindow = state.name;
+								state.shareWindow = $.windowName;
 								application.distribute('onSuccessShare', {
 									shareName: shareName,
 									locationName: $.locationName,

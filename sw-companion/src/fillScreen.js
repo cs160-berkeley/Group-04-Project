@@ -82,7 +82,7 @@ let SliderContainer = Column.template($ => ({
   top: 0, left: 0, right: 0,
   active: true,
   contents: [
-    new Header(),
+    new Header({state: state}),
     new Line({
 		top: 10, left: 0, right: 0,
 		contents: [
@@ -157,9 +157,6 @@ let locationName;
 let windowName;
 
 let FillScreen = Container.template($ => {
-  trace($.locationName + "\n");
-  trace($.windowName + "\n");
-
 	state = $.state;
 	locationName = $.locationName;
 	windowName = $.windowName;

@@ -8,7 +8,7 @@ export let WaitingForDeviceScreen = Container.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
 	skin: whiteSkin,
 	contents: [
-		new Header(),
+		// new Header(),
 		new Label({
 			top: 0, bottom: 0, left: 0, right: 0,
 			string: "Waiting for Device...",
@@ -21,7 +21,7 @@ export let ErrorScreen = Column.template($ => ({
 	top: 0, left: 0, right: 0, bottom: 0,
 	skin: whiteSkin,
 	contents: [
-		new Header(),
+		// new Header(),
 		new Text({
 			top: 50, bottom: 0, left: 0, right: 0,
 			string: "Oh no! The device was disconnected from the companion app!",

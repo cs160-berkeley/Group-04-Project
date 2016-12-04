@@ -44,7 +44,7 @@ let WindowScreen = Column.template($ => {
 		top: 0, left: 0, right: 0, bottom: 0,
 		active: true, skin: whiteSkin,
 		contents: [
-			new Header(),
+			new Header({state: $.state}),
 			new Line({
 				top: 20, left: 0, right: 0,
 				contents: [

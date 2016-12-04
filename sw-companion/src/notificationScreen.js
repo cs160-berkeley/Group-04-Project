@@ -5,7 +5,7 @@ import {
 	bigTextStyle
 } from 'utils';
 
-export var NotificationScreenNotificationTemplate = Container.template($ => ({
+let NotificationScreenNotificationTemplate = Container.template($ => ({
 	left: 5, right: 5, top: 5, height: 90, name: $.name,
 	skin: new Skin({fill:"#2D9CDB"}),
 	contents: [
@@ -27,11 +27,13 @@ export var NotificationScreenNotificationTemplate = Container.template($ => ({
 
 let state;
 
-export var NotificationScreenTemplate = Column.template($ => ({
+let NotificationScreen = Column.template($ => {
+state = $.state;
+return {
 	left: 0, right: 0, top: 0, bottom: 0,
-	skin: new Skin({fill: "#FFFFFF"}),
+	skin: whiteSkin, active: true,
 	contents: [
-		new Header(),
+		new Header({state: $.state}),
 		new Line({
 			top: 20, left: 0, right: 0,
 			contents: [
@@ -63,22 +65,24 @@ export var NotificationScreenTemplate = Column.template($ => ({
 			],
 			behavior: Behavior ({
 				onCreate: function(container, data) {
-					state = $.state;
-					if ($.shareWindow.length > 0) {
-						container.add(new NotificationScreenNotificationTemplate({ name: state.shareName, windowName: shareWindow }));
+					if ($.state.shareWindow.length > 0) {
+						container.add(new NotificationScreenNotificationTemplate({ name: $.state.shareName, windowName: $.state.shareWindow }));
 					}
 					//container.add(new NotificationScreenNotificationTemplate({ name: "Monkey" }));
 					//container.add(new NotificationScreenNotificationTemplate({ name: data.name, number: data.number }));
 				},
 				createNotification: function(container, data) {
-					container.add(new NotificationScreenNotificationTemplate({ name: data.name, windowName: data.windowName }));
+					container.add(new NotificationScreenNotificationTemplate({ name: data.locationName, windowName: data.windowName }));
 				},
 				zdestroy: function(container, data) {
 					eval("container.remove(container." + data.name + ");");
 					state.shareName = "";
 					state.shareWindow = "";
+					application.distribute("onRemoveNotification");
 				}
 			}),
 		})
 	]
-}));
+}});
+
+export default NotificationScreen;
