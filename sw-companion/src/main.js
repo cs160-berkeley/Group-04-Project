@@ -40,6 +40,10 @@ import {
 var deviceURL = "";
 var currentLocation = "";
 var currentWindow = "";
+var greySkin = new Skin({ fill:"#D5DCE2"});
+var updatingDeviceColorString = new Container({height: 100, width: 150, skin: greySkin, contents: [
+  new Text({left: 0, right: 0, string: "Updating color on window...", style: mediumTextStyle })
+]});
 
 Handler.bind("/discover", Behavior({
   onInvoke: function(handler, message){
@@ -108,6 +112,16 @@ Handler.bind("/syncColorToCompanion", Behavior({
   }
 }));
 
+Handler.bind("/delayUpdateColor", {
+    onInvoke: function(handler, message){
+        handler.wait(2500);
+    },
+    onComplete(handler, message){
+      trace("done updating window color \n");
+      application.remove(updatingDeviceColorString);
+    }
+});
+
 let remotePins;
 
 application.behavior = Behavior({
@@ -172,6 +186,8 @@ application.behavior = Behavior({
           a: state.locations[currentLocation][currentWindow].a
         })));
         application.add(new SpecificWindow(data));
+        application.add(updatingDeviceColorString);
+        application.invoke(new Message("/delayUpdateColor"));
         break;
       default:
         application.add(new LocationScreen(data));

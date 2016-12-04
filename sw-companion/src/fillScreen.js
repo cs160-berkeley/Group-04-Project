@@ -67,11 +67,11 @@ let WindowPreview = Line.template($ => ({
             behavior: Behavior({
               onTouchEnded: (content) => {
                 application.distribute('onBackPressed', {
-					screen: "Specific Window",
-					windowName: windowName,
-					locationName: locationName,
-					state: state
-				});
+        					screen: "Specific Window",
+        					windowName: windowName,
+        					locationName: locationName,
+        					state: state
+        				});
               }
             })
 	     })
