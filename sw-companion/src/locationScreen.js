@@ -43,13 +43,7 @@ let LocationScreen = Column.template($ => {
 						left: 0, right: 0, top: 0,
 						string: "Locations",
 						style: bigTextStyle
-					}),
-					new Picture({
-						url: "assets/add.png",
-						aspect: "fit",
-						height: 35,
-						left: "-120"
-					}),
+					})
 				]
 			}),
 			firstSquareContainer,
