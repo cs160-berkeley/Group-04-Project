@@ -17,6 +17,7 @@ var companionURL = "";
 
 var onFillScreen = false;
 let colorString = "";
+var updatingAppColorString = new Text({left: 0, right: 0, string: "Updating color on app...", style: mediumTextStyle });
 
 var smallBlackStyle = new Style( { font: "bold 20px", color:"black"});
 
@@ -142,7 +143,8 @@ let FillWindow = Column.template($ => {
                 application.invoke(new Message(companionURL + "syncColorToCompanion"));
                 application.empty();
                 onFillScreen = false;
-                application.add(new SpecificWindow());
+                application.add(updatingAppColorString);
+                application.invoke(new Message("/delayUpdateColor"));
               }
             })
           })
@@ -152,6 +154,16 @@ let FillWindow = Column.template($ => {
   }
 });
 
+Handler.bind("/delayUpdateColor", {
+    onInvoke: function(handler, message){
+        handler.wait(2500);
+    },
+    onComplete(handler, message, json){
+       trace("done updating companion app \n");
+       application.remove(updatingAppColorString);
+       application.add(new SpecificWindow());
+    }
+});
 
 let updatingColorLabel = Label.template($ => ({
 	top: 20, string: "Enter this code on the app: ",
@@ -277,9 +289,6 @@ application.behavior = Behavior({
 		            digital: { pin: 61, direction: "output" },
 		         }
 		      },
-
-         
-
 			colorSensor: {
 				require: "TCS34725",
 				pins: {
