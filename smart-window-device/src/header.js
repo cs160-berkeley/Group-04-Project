@@ -7,19 +7,9 @@ let header = Container.template($ => ({
 	skin: headerSkin,
 	contents: [
 		new Picture({
-			url: "assets/window.png",
+			url: "assets/header.png",
 			aspect: "fit",
-			height: 35,
-			left: 0,
-			right: 240
-		}),
-		new Text({
-			left: 65, right: 0,
-			string: "Smart Window",
-			style: new Style({
-				color: "white",
-				font: "bold 35px"
-			})
+			height: 60
 		})
 	]
 }));
