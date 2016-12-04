@@ -11,7 +11,10 @@ import {
 
 import {
 	bigTextStyle,
-	whiteSkin
+	whiteSkin,
+	mediumTextStyle,
+	colorButtonColor,
+	whiteTextStyle
 } from 'utils';
 
 var titleStyle = new Style( { font: "bold 28px", color:"black" } );
@@ -24,18 +27,55 @@ let ColorSlider = CircleSlider.template($ => ({
 }));
 
 
-let WindowPreview = Container.template($ => ({
-  bottom: 15, width: 100, height: 100,
-  skin: new Skin({
-    stroke: "green",
-    borders: {
-      left: 2,
-      right: 2,
-      top: 2,
-      bottom: 2
-    },
-    fill: $.windowFillColor
-  })
+let WindowPreview = Line.template($ => ({
+	bottom: 15,
+	skin: whiteSkin,
+	contents: [
+		new Container({
+			width: 100, height: 100,
+			skin: new Skin({
+				stroke: "green",
+			    borders: {
+			      left: 2,
+			      right: 2,
+			      top: 2,
+			      bottom: 2
+			    },
+			    fill: $.windowFillColor
+			})
+		}),
+		new Container({
+            left: 50, width: 70, height: 40, active: true,
+            skin: new Skin({
+              stroke: "black",
+              borders: {
+                left: 2,
+                right: 2,
+                top: 2,
+                bottom: 2
+              },
+              fill: colorButtonColor
+            }),
+            contents: [
+              new Text({
+                left: 0,
+                right: 0,
+                string: "Set",
+                style: whiteTextStyle
+              })
+            ],
+            behavior: Behavior({
+              onTouchEnded: (content) => {
+                application.distribute('onBackPressed', {
+					screen: "Specific Window",
+					windowName: windowName,
+					locationName: locationName,
+					state: state
+				});
+              }
+            })
+	     })
+	]
 }));
 
 let SliderContainer = Column.template($ => ({
@@ -55,8 +95,8 @@ let SliderContainer = Column.template($ => ({
 					onTouchEnded: (content) => {
 						application.distribute('onBackPressed', {
 							screen: "Specific Window",
-							windowName: $.windowName,
-							locationName: $.locationName,
+							windowName: windowName,
+							locationName: locationName,
 							state: state
 						});
 					}
@@ -113,12 +153,16 @@ let blueColorSlider;
 let alphaColorSlider;
 let rgbLabel;
 let alphaLabel;
+let locationName;
+let windowName;
 
 let FillScreen = Container.template($ => {
   trace($.locationName + "\n");
   trace($.windowName + "\n");
 
 	state = $.state;
+	locationName = $.locationName;
+	windowName = $.windowName;
 	let data = state.locations[$.locationName][$.windowName];
 	let r = Math.floor(data.r).toString();
 	let g = Math.floor(data.g).toString();
