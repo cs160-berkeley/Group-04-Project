@@ -172,7 +172,7 @@ let updatingColorLabel = Label.template($ => ({
 }));
 
 let codeLabel = Label.template($ => ({
-	top: 30, string: "3F9WINDOW08D",
+	top: 30, string: "QWERTY",
 	style: mediumTextStyle
 }));
 
