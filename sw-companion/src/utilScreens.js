@@ -9,9 +9,20 @@ export let WaitingForDeviceScreen = Container.template($ => ({
 	skin: whiteSkin,
 	contents: [
 		// new Header(),
-		new Label({
-			top: 0, bottom: 0, left: 0, right: 0,
-			string: "Waiting for Device...",
+		new Picture({
+			url: "assets/sw.png",
+			aspect: "fit",
+			top: 50,
+			height: 120
+		}),
+		new Text({
+			top: 230, left: 0, right: 0,
+			string: "Welcome to the Smart Window!",
+			style: mediumTextStyle
+		}),
+		new Text({
+			top: 330, left: 0, right: 0,
+			string: "Waiting for the Device to be Connected...",
 			style: mediumTextStyle
 		})
 	]

@@ -20,6 +20,7 @@ let colorString = "";
 var updatingAppColorString = new Text({left: 0, right: 0, string: "Updating color on app...", style: mediumTextStyle });
 
 var smallBlackStyle = new Style( { font: "bold 20px", color:"black"});
+var mediumBlackStyle = new Style( { font: "25px", color:"black"});
 
 let SpecificWindow = Column.template($ => {
   // colorString = "rgba(" + $.r + "," + $.g + "," + $.b + "," + $.a + ")";
@@ -156,7 +157,7 @@ let FillWindow = Column.template($ => {
 
 Handler.bind("/delayUpdateColor", {
     onInvoke: function(handler, message){
-        handler.wait(2500);
+        handler.wait(1200);
     },
     onComplete(handler, message, json){
        trace("done updating companion app \n");
@@ -206,10 +207,28 @@ let pollSyncWindow = (result) => {
   }
 };
 
+Handler.bind("/setTimeout", {    onInvoke: function(handler, message){        handler.wait(message.requestObject.duration);    }});let setTimeout = function(callback, duration, callbackArgs) {	new MessageWithObject("/setTimeout", {duration}).invoke().then(() => {		if (callback) callback(callbackArgs);	});}
 var sharedReader;
+var shared = false;
 let pollShared = (result) => {
   if (result == 1) {
+  	if (!shared) {
+  		shared = true;
+	  	application.add(new Container({
+	  		top: 20, bottom: 20, right: 20, left: 20,
+	  		skin: whiteSkin,
+	  		contents: [
+	  			new Text({
+	  				left: 0, right: 0,
+	  				string: "This window has been shared!",
+	  				style: mediumBlackStyle
+	  			})
+	  		]
+	  	}));
+	  	setTimeout(() => { application.remove(application.last) }, 2000)
+	}
   } else {
+  	shared = false;
   }
 };
 
@@ -234,7 +253,7 @@ Handler.bind("/syncColorToDevice", Behavior({
     colorString = "rgba(" + query.r + "," + query.g + "," + query.b + "," + query.a + ")";
 
     application.empty();
-    application.add(new FillWindow());
+    application.add(new SpecificWindow());
   }
 }));
 
@@ -249,7 +268,7 @@ Handler.bind("/updateColor", Behavior({
 
 Handler.bind("/doneUpdating", {
     onInvoke: function(handler, message){
-        handler.wait(4000);
+        handler.wait(0);
     },
     onComplete: function(handler, message){
         updatingColorLabel.string = " ";
@@ -261,11 +280,10 @@ let initialContainer = Container.template($ => ({
 	skin: whiteSkin,
 	contents: [
 		new Header(),
-		new Label({
-			top: 0, bottom: 0,
+		new Text({
 			left: 0, right: 0,
 			style: mediumTextStyle,
-			string: "Waiting for Window to be Added..."
+			string: "Waiting for a Window to be Added on the Companion App..."
 		})
 	]
 }));
@@ -325,17 +343,17 @@ application.behavior = Behavior({
 	onPinsConfigured(application, success) {
 		application.add(new initialContainer());
 		if (success) {
-			Pins.repeat("/colorSensor/getColor", 150, result => {
-        Pins.invoke("/alpha/read", value => {
-          if (onFillScreen) {
-            this.gotColor(application, result, value);
-          }
-        });
-      });
+			Pins.repeat("/colorSensor/getColor", 500, result => {
+				if (onFillScreen) {
+					Pins.invoke("/alpha/read", value => {
+		            	this.gotColor(application, result, value);
+		        	});	
+				}  
+      	});
 			Pins.share("ws", {zeroconf: true, name: "smart-window-pins"});
 			buttonReader = Pins.repeat("/isWindowActive/read", 200, pollWindow);
       		syncButtonReader = Pins.repeat("/windowSynched/read", 200, pollSyncWindow);
-      		sharedReader = Pins.repeat("/isWindowShared/read", 200, pollShared);
+      		sharedReader = Pins.repeat("/isWindowShared/read", 1000, pollShared);
 		}
 		else
 			trace("failed to configure pins\n");
